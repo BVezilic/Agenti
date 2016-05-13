@@ -51,7 +51,7 @@ public class Database {
 	}
 	
 	public Boolean doHandshake(){
-		
+		System.out.println("TEST ZA GIT");
 		try {
 			System.out.println("doHandshake -- dataBase");
 			ResteasyClient client = new ResteasyClientBuilder().build();
