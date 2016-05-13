@@ -1,10 +1,131 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Agenti</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 1200px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
 </head>
 <body>
-	THANK GOD!
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <h1 style="color: white">Agenti</h1>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-3 sidenav">
+    	<div class="well">
+    		<p>Svi tipovi agenata</p>
+    	</div>
+    </div>
+    <div class="col-sm-5 text-left"> 
+      <form role="form">
+	  	<div class="form-group" style="margin-top: 15px">
+    	  <label for="perform">Performative:</label>
+    	  <input type="text" class="form-control" id="perform">
+	    </div>
+	    <div class="form-group">
+	      <label for="sender">Sender:</label>
+	      <input type="text" class="form-control" id="sender">
+	    </div>
+	    <div class="form-group">
+	      <label for="receivers">Receivers:</label>
+	      <input type="text" class="form-control" id="receivers">
+	    </div>
+	    <div class="form-group">
+	      <label for="replyTo">ReplyTo:</label>
+	      <input type="text" class="form-control" id="replyTo">
+	    </div>
+	    <div class="form-group">
+	      <label for="content">Content:</label>
+	      <input type="text" class="form-control" id="content">
+	    </div>
+	    <div class="form-group">
+	      <label for="contentObj">ContentObj:</label>
+	      <input type="text" class="form-control" id="contentObj">
+	    </div>
+	    <div class="form-group">
+	      <label for="userArgs">UserArgs:</label>
+	      <input type="text" class="form-control" id="userArgs">
+	    </div>
+	    <div class="form-group">
+	      <label for="language">Language:</label>
+	      <input type="text" class="form-control" id="language">
+	    </div>
+	    <div class="form-group">
+	      <label for="encoding">Encoding:</label>
+	      <input type="text" class="form-control" id="encoding">
+	    </div>
+	    <div class="form-group">
+	      <label for="ontology">Ontology:</label>
+	      <input type="text" class="form-control" id="ontology">
+	    </div>
+	    <div class="form-group">
+	      <label for="protocol">Protocol:</label>
+	      <input type="text" class="form-control" id="protocol">
+	    </div>
+	    <div class="form-group">
+	      <label for="conversationId">ConversationId:</label>
+	      <input type="text" class="form-control" id="conversationId">
+	    </div>
+	    <div class="form-group">
+	      <label for="replyWith">ReplyWith:</label>
+	      <input type="text" class="form-control" id="replyWith">
+	    </div>
+	    <div class="form-group">
+	      <label for="inReplyTo">InReplyTo:</label>
+	      <input type="text" class="form-control" id="inReplyTo">
+	    </div>
+	    <div class="form-group">
+	      <label for="replyBy">ReplyBy:</label>
+	      <input type="text" class="form-control" id="replyBy">
+	    </div>
+	    <button type="submit" class="btn btn-default">Send</button>
+	  </form>
+    </div>
+    <div class="col-sm-4 sidenav">
+      <div class="well">
+        <p>Konzola koja ce ispisivati stanja agenata</p>
+      </div>
+      <div class="well">
+        <p>Ako bude jos nesto trebalo da se doda, stavicemo ovde</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
