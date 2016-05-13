@@ -4,7 +4,7 @@ public abstract class Agent {
 
 	private AID id;
 	
-	public abstract void handleMessage(ACLPoruka poruka);
+	public abstract void handleMessage(ACLMessage poruka);
 
 	public AID getId() {
 		return id;

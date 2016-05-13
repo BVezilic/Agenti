@@ -3,7 +3,7 @@ package model;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class ACLPoruka {
+public class ACLMessage {
 	
 	private Performative performative;
 	private AID sender;
@@ -20,7 +20,7 @@ public class ACLPoruka {
 	private String replyWith;
 	private Long replyBy;
 	
-	public ACLPoruka() {
+	public ACLMessage() {
 		super();
 	}
 
