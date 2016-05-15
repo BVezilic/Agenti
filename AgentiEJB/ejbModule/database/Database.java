@@ -20,7 +20,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import model.Agent;
 import model.AgentType;
 import model.AgentskiCentar;
-import sun.management.resources.agent;
 
 @Startup
 @Singleton

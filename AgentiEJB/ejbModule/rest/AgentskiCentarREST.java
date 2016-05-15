@@ -2,7 +2,6 @@ package rest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
