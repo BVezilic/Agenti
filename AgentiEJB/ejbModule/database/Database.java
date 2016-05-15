@@ -63,7 +63,7 @@ public class Database {
 		try {
 			
 			// Saljem register ka masteru
-			System.out.println("doHandshake -- dataBase");
+			System.out.println("doHandshake -- DataBase");
 			ResteasyClient client = new ResteasyClientBuilder().build();
 			ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
 			Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
@@ -72,7 +72,7 @@ public class Database {
 			System.out.println("Odradjen handshake");
 					
 		} catch (Exception e){
-			System.out.println("Desion se exception doHandshake");
+			System.out.println("Desion se exception doHandshake -- Database");
 			e.printStackTrace();
 			return false;
 		}
