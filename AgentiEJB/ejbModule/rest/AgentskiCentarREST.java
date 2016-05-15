@@ -1,7 +1,9 @@
 package rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -12,8 +14,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+
+import database.Database;
 import model.ACLMessage;
 import model.Agent;
 import model.AgentType;
@@ -25,6 +35,9 @@ import model.Performative;
 @Stateless
 public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 
+	@EJB
+	Database database;
+	
 // KLIJENT - AGENTSKI CENTAR
 
 	/**
@@ -99,7 +112,41 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/node")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void register(AgentskiCentar agentskiCentar){
-																									
+			
+		if (database.isMaster()){
+			System.out.println("Master cvor primio register od " + agentskiCentar.getAlias());
+			System.out.println("Master cvor salje zahtev za spisak podrzavanjih agenata");
+			
+			// Zahtev za spisak podrzavanih agenata od novog cvora (@GET /agents/classes)
+			ResteasyClient client = new ResteasyClientBuilder().build();
+			ResteasyWebTarget target = client.target("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
+			Response response = target.request(MediaType.APPLICATION_JSON).get();
+			ArrayList<AgentType> podrzavaniAgenti = (ArrayList<AgentType>) response.readEntity(new GenericType<List<AgentType>>(){});
+			database.addSviTipoviAgenata(podrzavaniAgenti);
+			
+			// Salje se zahtev za register svim cvorovima osim master cvoru i novom cvoru (@POST /node)
+			for (AgentskiCentar ac : database.getAgentskiCentri()) {
+				if (!ac.getAddress().equals(database.getMasterIP()) && !ac.getAddress().equals(agentskiCentar.getAddress())){
+					target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node");
+					response = target.request().post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
+				}
+			}
+			
+			// Salje se spisak novih tipova agenata svim cvorovima osim master i novom cvoru (@POST /agents/classes)
+			for (AgentskiCentar ac : database.getAgentskiCentri()) {
+				if (!ac.getAddress().equals(database.getMasterIP()) && !ac.getAddress().equals(agentskiCentar.getAddress())){
+					target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
+					response = target.request().post(Entity.entity(database.getSviTipoviAgenata(), MediaType.APPLICATION_JSON));
+				}
+			}
+			
+		} else {
+			
+			System.out.println("Slave cvor primio register za cvor " + agentskiCentar.getAlias());
+			database.addAgentskiCentar(agentskiCentar);
+			
+		}
+		
 	}
 	
 	/**
