@@ -53,6 +53,7 @@ public class Database {
 			System.out.println("Nisam master");
 			if (!doHandshake()){
 				rollback();
+			} else {
 			}
 		} else {
 			System.out.println("Ja sam master");
@@ -69,6 +70,7 @@ public class Database {
 			Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
 			List<AgentskiCentar> agentskiCentri = response.readEntity(new GenericType<List<AgentskiCentar>>(){});
 			addAllAgentskiCentri(agentskiCentri);
+			System.out.println("Odradjen handshake");
 					
 		} catch (Exception e){
 			System.out.println("Desion se exception doHandshake");

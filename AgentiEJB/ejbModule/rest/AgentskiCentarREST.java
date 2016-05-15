@@ -147,6 +147,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				response = target.request().post(Entity.entity(database.getActiveAgents(), MediaType.APPLICATION_JSON));
 				
 				// Salje se spisak agentskih centara
+				System.out.println("Vracam spisak agentskih centara");
 				return database.getAgentskiCentri();
 				
 			} else {
