@@ -111,7 +111,8 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@POST
 	@Path("/node")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void register(AgentskiCentar agentskiCentar){
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<AgentskiCentar> register(AgentskiCentar agentskiCentar){
 			
 		if (database.isMaster()){
 			System.out.println("Master cvor primio register od " + agentskiCentar.getAlias());
@@ -132,19 +133,22 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				}
 			}
 			
-			// Salje se spisak novih tipova agenata svim cvorovima osim master i novom cvoru (@POST /agents/classes)
+			// Salje se spisak novih tipova agenata svim cvorovima osim masteru (@POST /agents/classes)
 			for (AgentskiCentar ac : database.getAgentskiCentri()) {
-				if (!ac.getAddress().equals(database.getMasterIP()) && !ac.getAddress().equals(agentskiCentar.getAddress())){
+				if (!ac.getAddress().equals(database.getMasterIP())){
 					target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
 					response = target.request().post(Entity.entity(database.getSviTipoviAgenata(), MediaType.APPLICATION_JSON));
 				}
 			}
+			
+			return database.getAgentskiCentri();
 			
 		} else {
 			
 			System.out.println("Slave cvor primio register za cvor " + agentskiCentar.getAlias());
 			database.addAgentskiCentar(agentskiCentar);
 			
+			return null;
 		}
 		
 	}
@@ -156,7 +160,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<AgentType> getSupportedAgentTypes(){ 
-		return null;
+		return database.getPodrzaniTipoviAgenata();
 	}
 	
 	/**
@@ -167,7 +171,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/classes")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendAgentTypes(List<AgentType> tipoviAgenata){ 
-		
+		database.addSviTipoviAgenata((ArrayList<AgentType>)tipoviAgenata);
 	}
 	
 	/**
@@ -177,7 +181,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendStartedAgents(List<Agent> agents){
-	
+		database.addAllActiveAgents(agents);
 	}
 	
 	/**

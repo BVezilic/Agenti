@@ -3,11 +3,13 @@ package database;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -59,11 +61,15 @@ public class Database {
 	
 	public Boolean doHandshake(){
 		try {
+			
+			// Saljem register ka masteru
 			System.out.println("doHandshake -- dataBase");
 			ResteasyClient client = new ResteasyClientBuilder().build();
 			ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
-			Response response = target.request().post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
-		
+			Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
+			List<AgentskiCentar> agentskiCentri = response.readEntity(new GenericType<List<AgentskiCentar>>(){});
+			addAllAgentskiCentri(agentskiCentri);
+					
 		} catch (Exception e){
 			System.out.println("Desion se exception doHandshake");
 			e.printStackTrace();
@@ -101,6 +107,12 @@ public class Database {
 		return true;
 	}
 	
+	public void addAllActiveAgents(List<Agent> agents){
+		for (Agent agent : agents) {
+			addActiveAgent(agent);
+		}
+	}
+	
 	public Boolean addAgentskiCentar(AgentskiCentar agentskiCentar){
 		for (AgentskiCentar ac : agentskiCentri) {
 			if (ac.getAlias().equals(agentskiCentar.getAlias())){
@@ -111,6 +123,12 @@ public class Database {
 		System.out.println("Dodat novi agentski centar: " + agentskiCentar.getAlias() + " " + agentskiCentar.getAddress());
 		agentskiCentri.add(agentskiCentar);
 		return true;
+	}
+	
+	public void addAllAgentskiCentri(List<AgentskiCentar> agentskiCentri){
+		for (AgentskiCentar agentskiCentar : agentskiCentri) {
+			addAgentskiCentar(agentskiCentar);
+		}
 	}
 	
 	public Boolean addPodrzaniTipAgenta(AgentType agentType){

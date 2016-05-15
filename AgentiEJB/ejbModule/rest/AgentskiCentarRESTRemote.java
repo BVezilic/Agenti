@@ -79,7 +79,8 @@ public interface AgentskiCentarRESTRemote {
 		@POST
 		@Path("/node")
 		@Consumes(MediaType.APPLICATION_JSON)
-		public void register(AgentskiCentar agentskiCentar);
+		@Produces(MediaType.APPLICATION_JSON)
+		public List<AgentskiCentar> register(AgentskiCentar agentskiCentar);
 		
 		/**
 		 * Master čvor traži spisak tipova agenata koje podržava nov ne-master čvor;
