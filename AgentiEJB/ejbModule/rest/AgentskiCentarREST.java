@@ -2,7 +2,6 @@ package rest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -39,6 +38,36 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@EJB
 	Database database;
 	
+// TEST 
+	
+	@GET
+	@Path("/test")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String test(){
+		String retVal = "";
+		retVal += "Trenutni cvor: " + database.getAgentskiCentar().getAlias() + " " + database.getAgentskiCentar().getAddress() + "\n\n";
+		retVal += "Agentski centri: \n\n";
+		for (AgentskiCentar ac : database.getAgentskiCentri()) {
+			retVal += ac.toString() + "\n";
+		}
+		
+		retVal += "Aktivni agenti: \n\n";
+		for (Agent ag : database.getActiveAgents()){
+			retVal += ag.toString() + "\n";
+		}
+		
+		retVal += "Podrzani tipovi agenata: \n\n";
+		for (AgentType at : database.getPodrzaniTipoviAgenata()){
+			retVal += at.toString() + "\n";
+		}
+		
+		retVal += "Svi tipovi agenata: \n\n";
+		for (AgentType at : database.getSviTipoviAgenata()){
+			retVal += at.toString() + "\n";
+		}
+		
+		return retVal;
+	}
 // KLIJENT - AGENTSKI CENTAR
 
 	/**
@@ -48,8 +77,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<AgentType> getAgentTypes(){ 
-	
-		return null;
+		return database.getSviTipoviAgenata();
 	}
 	
 	/**
@@ -59,8 +87,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Agent> getActiveAgents(){
-	
-		return null;
+		return database.getActiveAgents();
 	}
 	
 	/**
@@ -69,7 +96,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@PUT
 	@Path("/agents/running/{type}/{name}")
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
-	
+		
 	}
 	
 	/**
@@ -98,8 +125,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/message")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Performative> getPerformatives(){ 
-	
-		return null;
+		ArrayList<Performative> retVal = new ArrayList<Performative>();
+		for (Performative p : Performative.values()) {
+			retVal.add(p);
+		}
+		return retVal;
 	}
 	
 // AGENTSKI CENTAR - AGENTSKI CENTAR
