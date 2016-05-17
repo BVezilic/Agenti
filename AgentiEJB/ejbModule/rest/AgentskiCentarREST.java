@@ -34,6 +34,7 @@ import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 import model.Performative;
+import sun.management.resources.agent;
 import test.Ping;
 
 @LocalBean
@@ -198,9 +199,12 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				ArrayList<AgentType> podrzavaniAgenti = (ArrayList<AgentType>) response.readEntity(new GenericType<List<AgentType>>(){});
 				database.addSviTipoviAgenata(podrzavaniAgenti);
 				
+				System.out.println("Pre FORA");
 				// Salje se zahtev za register svim cvorovima osim master cvoru i novom cvoru (@POST /node)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
+					
 					if (!ac.getAddress().equals(database.getMasterIP()) && !ac.getAddress().equals(agentskiCentar.getAddress())){
+						System.out.println("Prvi for " + agentskiCentar.getAlias());
 						target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node");
 						response = target.request().post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
 					}
@@ -209,12 +213,14 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				// Salje se spisak novih tipova agenata svim cvorovima osim masteru (@POST /agents/classes)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
 					if (!ac.getAddress().equals(database.getMasterIP())){
+						System.out.println("Drugi for " + agentskiCentar.getAlias());
 						target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
 						response = target.request().post(Entity.entity(database.getSviTipoviAgenata(), MediaType.APPLICATION_JSON));
 					}
 				}
 				
 				// Salje se spisak aktivnih agenata novom cvoru
+				System.out.println("Saljem spisak svih agenata novom cvoru");
 				target = client.target("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running");
 				response = target.request().post(Entity.entity(database.getActiveAgents(), MediaType.APPLICATION_JSON));
 				
