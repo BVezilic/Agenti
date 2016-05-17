@@ -54,7 +54,8 @@
 	    	<div class="well" ng-controller="AgentListCtrl">
 	    		<span>{{AgentType}}</span>
 	    		<input type="text" ng-model="pingName">
-	    		<button ng-click="activate()">Activate</button>    		
+	    		<button ng-click="activate()" ng-show="switch">Activate</button>  
+	    		<button ng-click="deactivate()" ng-hide="switch">Deactivate</button>  		
 	    	</div>
 	    </div>
 	    <div class="col-sm-5 text-left"> 
