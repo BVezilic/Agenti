@@ -41,6 +41,14 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 // TEST 
 	
 	@GET
+	@Path("/probaStart")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String proba(){
+		System.out.println("RADI PROBA");
+		return "RADI";
+	}
+	
+	@GET
 	@Path("/test")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String test(){

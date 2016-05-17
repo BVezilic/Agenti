@@ -39,7 +39,6 @@ public class Database {
 	@PostConstruct
 	public void onStartup(){
 		
-		 
 		try {
 			agentskiCentar = new AgentskiCentar();
 			agentskiCentar.setAddress(InetAddress.getLocalHost().getHostAddress());
@@ -56,6 +55,8 @@ public class Database {
 			}
 		} else {
 			System.out.println("Ja sam master");
+			addAgentskiCentar(agentskiCentar);
+			
 		}
 	}
 	
@@ -84,7 +85,7 @@ public class Database {
 		
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
-		Response response = target.request().delete();
+		/*Response response =*/ target.request().delete();
 			
 	}
 	

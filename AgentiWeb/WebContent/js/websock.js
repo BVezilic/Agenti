@@ -1,6 +1,14 @@
 function sendMessage() {
-	var to = $('#username').html();
-	var content = $('#content').val();
+	var perform = $('#perform').val();
+	var sender = $('#sender').val();
+	var sender = $('#receivers').val();
+	var sender = $('#replyTo').val();
+	var sender = $('#content').val();
+	var sender = $('#').val();
+	var sender = $('#sender').val();
+	var sender = $('#sender').val();
+	var sender = $('#sender').val();
+	var sender = $('#sender').val();
 	
 	if (content == "") {
 		alert('Please enter message\n');
@@ -16,14 +24,23 @@ function sendMessage() {
 	}
 }
 
+function submitWS(){
+	console.log("Submit WS");
+}
+
+function submitREST(){
+	console.log("Submit REST");
+}
+
 function log(msg) {
 	console.log(msg);
 }
 
+var podrzanWebSocket = false;
 if (!("WebSocket" in window)) {
-	$('Oh no, you need a browser that supports WebSockets. How about <a href="http://www.google.com/chrome">Google/a>?')
-			.appendTo('body');
+	podrzanWebSocket = false;
 } else {
+	podrzanWebSocket = true;
 	var host = "ws://localhost:8080/AgentiWeb/websocket";
 	try {
 		socket = new WebSocket(host);
@@ -50,8 +67,13 @@ if (!("WebSocket" in window)) {
 	}
 }
 $(document).ready(function(){
-	$('#sendMsg').click(function() {
-		sendMessage();
-		$('#content').val("");
+	
+	$('#submit').click(function() {
+			if (podrzanWebSocket){
+				submitWS();
+			} else {
+				submitREST();
+			}
 	});
+	
 });
