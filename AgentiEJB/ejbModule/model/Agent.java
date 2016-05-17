@@ -6,8 +6,6 @@ public abstract class Agent implements AgentInterface {
 	private static final long serialVersionUID = -6431055503756843639L;
 	
 	private AID id;
-	
-	public abstract void handleMessage(ACLMessage poruka);
 
 	public AID getId() {
 		return id;
