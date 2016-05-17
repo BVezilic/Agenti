@@ -6,6 +6,9 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,10 +28,13 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import database.Database;
 import model.ACLMessage;
+import model.AID;
 import model.Agent;
+import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 import model.Performative;
+import test.Ping;
 
 @LocalBean
 @Path("/agentskiCentar")
@@ -44,8 +50,18 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/probaStart")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String proba(){
-		System.out.println("RADI PROBA");
-		return "RADI";
+		try {
+			
+			Context context = new InitialContext();
+			AgentInterface ping =  (AgentInterface) context.lookup("java:module/Ping");
+			ping.stop();
+					
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "Proba";
 	}
 	
 	@GET
@@ -104,7 +120,19 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@PUT
 	@Path("/agents/running/{type}/{name}")
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
-		
+		try {
+			System.out.println("Dodaj agenta sa imenom " + name + " " + type);
+			Context context = new InitialContext();
+			Agent agent = (Agent) context.lookup("java:module/" + type);
+			System.out.println(agent.getClass().getName());
+			agent.stop();
+			System.out.println("TEST");
+			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(name,null)));
+			database.addActiveAgent(agent);
+			
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -113,7 +141,10 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@DELETE
 	@Path("/agents/running/{aid}")
 	public void stopAgentByAID(@PathParam("aid")String aid){
-	
+		
+		Agent agent = database.getActiveAgentByName(aid);
+		database.removeActiveAgent(agent);
+		agent.stop();
 	}
 	
 	/**

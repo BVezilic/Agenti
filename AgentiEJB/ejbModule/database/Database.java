@@ -17,6 +17,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import model.AID;
 import model.Agent;
 import model.AgentType;
 import model.AgentskiCentar;
@@ -98,6 +99,7 @@ public class Database {
 	}
 	
 	public Boolean addActiveAgent(Agent agent){
+		System.out.println("NJegov id");
 		for (Agent a : activeAgents) {
 			if (a.getId().equals(agent.getId())){
 				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getId().getName());
@@ -162,6 +164,26 @@ public class Database {
 		for (AgentType at : listaAgenata) {
 			addSviTipoviAgenata(at);
 		}
+	}
+	
+	public Agent getActiveAgentByName(String name){
+		for (Agent agent : activeAgents) {
+			if (agent.getId().getName().equals(name)){
+				return agent;
+			}
+		}
+		return null;
+	}
+	
+	public boolean removeActiveAgent(Agent agent){
+		for (Agent a : activeAgents){
+			if (a.equals(agent)){
+				activeAgents.remove(a);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	public ArrayList<Agent> getActiveAgents() {

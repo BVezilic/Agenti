@@ -5,8 +5,13 @@ public abstract class Agent implements AgentInterface {
 
 	private static final long serialVersionUID = -6431055503756843639L;
 	
-	private AID id;
-
+	protected AID id;
+	
+	public void init(AID aid) {
+		// TODO Auto-generated method stub
+		this.id = aid;
+		System.out.println("AGENT INITIALISED");
+	}
 	public AID getId() {
 		return id;
 	}

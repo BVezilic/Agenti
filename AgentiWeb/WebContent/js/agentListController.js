@@ -1,7 +1,7 @@
-var app = angular.module('myApp', []);
+var app = angular.module('MyApp', []);
 app.controller('AgentListCtrl', function($scope, $http) {
-    $scope.activate = function() {
-        $http.put("http://localhost:8080/AgentiWeb/rest/AgentskiCentar/agents/running/"+$scope.AgentType+"/"+$scope.pingName);
-        console.log("http://localhost:8080/AgentiWeb/rest/AgentskiCentar/agents/running/"+$scope.AgentType+"/"+$scope.pingName);
+	$scope.AgentType = 'Ping';
+    $scope.activate = function() {    	
+        $http.put("http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running/"+$scope.AgentType+"/"+$scope.pingName);
     };
 });
