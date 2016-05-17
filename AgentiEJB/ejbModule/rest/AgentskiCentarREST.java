@@ -97,12 +97,13 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	/**
 	 * dobavi listu svih tipova agenata na sistemu;
 	 */
+	/*
 	@GET
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<AgentType> getAgentTypes(){ 
 		return database.getSviTipoviAgenata();
-	}
+	}*/
 	
 	/**
 	 * dobavi sve pokrenute agente sa sistema;
@@ -191,6 +192,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				
 				// Zahtev za spisak podrzavanih agenata od novog cvora (@GET /agents/classes)
 				ResteasyClient client = new ResteasyClientBuilder().build();
+				System.out.println("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
 				ResteasyWebTarget target = client.target("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
 				Response response = target.request(MediaType.APPLICATION_JSON).get();
 				ArrayList<AgentType> podrzavaniAgenti = (ArrayList<AgentType>) response.readEntity(new GenericType<List<AgentType>>(){});
