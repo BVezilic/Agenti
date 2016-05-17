@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
   <script src="js/websock.js"></script>
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */ 
@@ -36,7 +37,7 @@
   </style>
 </head>
 <body>
-
+<div ng-app="MyApp">
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -48,10 +49,13 @@
 <div class="container-fluid text-center">    
   <div class="row content">
     <div class="col-sm-3 sidenav">
-    	<div class="well">
-    		<p>Svi tipovi agenata</p>
+    	<div class="well" ng-controller="AgentListCtrl" ng-init="AgentType='Ping'">
+    		<span>{{AgentType}}</span>
+    		<input type="text" ng-model="pingName">
+    		<button ng-click="activate()">Activate</button>    		
     	</div>
     </div>
+    <script src="agentListController.js"></script>
     <div class="col-sm-5 text-left"> 
 
 	  	<div class="form-group" style="margin-top: 15px">
@@ -126,6 +130,6 @@
     </div>
   </div>
 </div>
-
+</div>
 </body>
 </html>

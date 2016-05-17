@@ -25,6 +25,7 @@ function sendMessage() {
 }
 
 function submitWS(){
+	
 	console.log("Submit WS");
 }
 
