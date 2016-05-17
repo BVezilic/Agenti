@@ -67,6 +67,7 @@ public class Database {
 			// Saljem register ka masteru
 			System.out.println("doHandshake -- DataBase");
 			ResteasyClient client = new ResteasyClientBuilder().build();
+			System.out.println("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
 			ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
 			Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
 			List<AgentskiCentar> agentskiCentri = response.readEntity(new GenericType<List<AgentskiCentar>>(){});
