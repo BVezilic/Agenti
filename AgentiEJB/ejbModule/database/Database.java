@@ -37,7 +37,7 @@ public class Database {
 	
 	
 	
-	@PostConstruct
+	//@PostConstruct
 	public void onStartup(){
 		
 		try {
