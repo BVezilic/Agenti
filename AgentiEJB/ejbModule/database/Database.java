@@ -31,7 +31,7 @@ public class Database {
 	// Spisak agenata koji su podrzani na ovom cvoru
 	private ArrayList<AgentType> podrzaniTipoviAgenata = new ArrayList<AgentType>();
 	private ArrayList<AgentType> sviTipoviAgenata = new ArrayList<AgentType>();
-	private String masterIP = "192.168.0.10";
+	private String masterIP = "192.168.56.1";
 	private AgentskiCentar agentskiCentar;
 	
 	
