@@ -183,6 +183,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<AgentskiCentar> register(AgentskiCentar agentskiCentar){
+		
 		try {	
 			if (database.isMaster()){
 				System.out.println("Master cvor primio register od " + agentskiCentar.getAlias());
