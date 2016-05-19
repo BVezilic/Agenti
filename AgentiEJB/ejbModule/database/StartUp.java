@@ -55,7 +55,9 @@ public class StartUp {
 				rollback();
 			}
 			System.out.println("Startup -- Slave");
-		
+			AgentType ping = new AgentType("Pong", "AgentiEJB");
+			database.addPodrzaniTipAgenta(ping);
+			database.addSviTipoviAgenata(ping);
 		}
 		
 	}
