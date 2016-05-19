@@ -14,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import model.ACLMessage;
-import model.AID;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;

@@ -43,25 +43,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	Database database;
 	
 // TEST 
-	
-	@GET
-	@Path("/probaStart")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String proba(){
-		try {
-			
-			Context context = new InitialContext();
-			AgentInterface ping =  (AgentInterface) context.lookup("java:module/Ping");
-			ping.stop();
-					
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return "Proba";
-	}
-	
+
 	@GET
 	@Path("/test")
 	@Produces(MediaType.TEXT_PLAIN)
@@ -139,7 +121,6 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running/{aid}/{hostName}")
 	public void stopAgentByAID(@PathParam("aid") String aid, @PathParam("hostName") String hostName){
 		
-		System.out.println("AID:" + aid + " " + "Host name:" + hostName);
 		AID agentAID = new AID(aid, database.getAgentskiCentarByName(hostName) , null);
 		AgentInterface agent = database.getActiveAgentByAID(agentAID);
 		database.removeActiveAgent(agent);
@@ -197,12 +178,10 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				ArrayList<AgentType> podrzavaniAgenti = (ArrayList<AgentType>) response.readEntity(new GenericType<List<AgentType>>(){});
 				database.addSviTipoviAgenata(podrzavaniAgenti);
 				
-				System.out.println("Pre FORA");
 				// Salje se zahtev za register svim cvorovima osim master cvoru i novom cvoru (@POST /node)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
 					
 					if (!ac.getAddress().equals(database.getMasterIP()) /*&& !ac.getAddress().equals(agentskiCentar.getAddress()*/){
-						System.out.println("Prvi for " + agentskiCentar.getAlias());
 						target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node");
 						response = target.request().post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
 					}
@@ -212,7 +191,6 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				// Salje se spisak novih tipova agenata svim cvorovima osim masteru (@POST /agents/classes)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
 					if (!ac.getAddress().equals(database.getMasterIP())){
-						System.out.println("Drugi for " + agentskiCentar.getAlias());
 						target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
 						response = target.request().post(Entity.entity(database.getSviTipoviAgenata(), MediaType.APPLICATION_JSON));
 					}
