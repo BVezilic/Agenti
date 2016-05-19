@@ -37,10 +37,10 @@ app.controller('AgentListCtrl', function($scope, $http) {
 		  });
     };
     
-    $scope.deactivate = function(agentName) {   
+    $scope.deactivate = function(agentAID) {   
     	$http({
   		  method: 'DELETE',
-  		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running/'+agentName
+  		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running/'+agentAID.name+'/'+agentAID.host.alias
   		}).then(function successCallback(response) {
   			$http({
 				  method: 'GET',

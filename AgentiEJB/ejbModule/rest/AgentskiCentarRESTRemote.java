@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import model.ACLMessage;
+import model.AID;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
@@ -52,8 +53,8 @@ public interface AgentskiCentarRESTRemote {
 		 * zaustavi određenog agenta
 		 */
 		@DELETE
-		@Path("/agents/running/{aid}")
-		public void stopAgentByAID(@PathParam("aid")String aid);
+		@Path("/agents/running/{aid}/{hostName}")
+		public void stopAgentByAID(@PathParam("aid") String aid, @PathParam("hostName") String hostName);
 		
 		/**
 		 * pošalji ACL poruku

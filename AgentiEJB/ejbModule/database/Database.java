@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import model.AID;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
@@ -17,60 +18,12 @@ public class Database {
 	private ArrayList<AgentInterface> activeAgents = new ArrayList<AgentInterface>();
 	private ArrayList<AgentskiCentar> agentskiCentri = new ArrayList<AgentskiCentar>();
 	
-	// Spisak agenata koji su podrzani na ovom cvoru
 	private ArrayList<AgentType> podrzaniTipoviAgenata = new ArrayList<AgentType>();
 	private ArrayList<AgentType> sviTipoviAgenata = new ArrayList<AgentType>();
+	
 	private String masterIP = "192.168.0.10";
 	private AgentskiCentar agentskiCentar;
 	
-	
-	
-	/*@PostConstruct
-	public void onStartup(){
-		
-		if (!isMaster()){
-			System.out.println("Nisam master");
-			if (!doHandshake()){
-				rollback();
-			} else {
-			}
-		} else {
-			System.out.println("Ja sam master");
-			addAgentskiCentar(agentskiCentar);
-			
-		}
-	}
-	
-	public Boolean doHandshake(){
-		try {
-			
-			// Saljem register ka masteru
-			System.out.println("doHandshake -- DataBase");
-			ResteasyClient client = new ResteasyClientBuilder().build();
-			System.out.println("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
-			ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/");
-			Response response = target.request(MediaType.APPLICATION_JSON).post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
-			List<AgentskiCentar> agentskiCentri = response.readEntity(new GenericType<List<AgentskiCentar>>(){});
-			addAllAgentskiCentri(agentskiCentri);
-			System.out.println("Odradjen handshake");
-					
-		} catch (Exception e){
-			System.out.println("Desion se exception doHandshake -- Database");
-			e.printStackTrace();
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public void rollback(){
-		
-		ResteasyClient client = new ResteasyClientBuilder().build();
-		ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
-		/*Response response = target.request().delete();
-			
-	}
-	*/
 	
 	public Boolean isMaster(){
 		if (agentskiCentar.getAddress().equals(masterIP)){
@@ -152,6 +105,27 @@ public class Database {
 		for (AgentInterface agent : activeAgents) {
 			if (agent.getAID().getName().equals(name)){
 				return agent;
+			}
+		}
+		return null;
+	}
+	
+	public AgentInterface getActiveAgentByAID(AID aid){
+		for (AgentInterface agent : activeAgents) {
+			AID temp = agent.getAID();
+			System.out.println(temp.getName() + " " + aid.getName());
+			System.out.println(temp.getHost());
+			if (temp.getName().equals(aid.getName()) && temp.getHost().getAlias().equals(aid.getHost().getAlias())){
+				return agent;
+			}
+		}
+		return null;
+	}
+	
+	public AgentskiCentar getAgentskiCentarByName(String name){
+		for (AgentskiCentar ac : agentskiCentri){
+			if (ac.getAlias().equals(name)){
+				return ac;
 			}
 		}
 		return null;

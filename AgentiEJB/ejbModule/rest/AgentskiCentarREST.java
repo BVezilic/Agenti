@@ -12,7 +12,6 @@ import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotAllowedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -120,10 +119,9 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@PUT
 	@Path("/agents/running/{type}/{name}")
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
+		
 		try {
-			
-			
-			System.out.println(type + " " + name);
+
 			Context context = new InitialContext();
 			AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
 			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
@@ -138,12 +136,15 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	 * zaustavi određenog agenta
 	 */
 	@DELETE
-	@Path("/agents/running/{aid}")
-	public void stopAgentByAID(@PathParam("aid")String aid){
+	@Path("/agents/running/{aid}/{hostName}")
+	public void stopAgentByAID(@PathParam("aid") String aid, @PathParam("hostName") String hostName){
 		
-		AgentInterface agent = database.getActiveAgentByName(aid);
+		System.out.println("AID:" + aid + " " + "Host name:" + hostName);
+		AID agentAID = new AID(aid, database.getAgentskiCentarByName(hostName) , null);
+		AgentInterface agent = database.getActiveAgentByAID(agentAID);
 		database.removeActiveAgent(agent);
 		agent.stop();
+		
 	}
 	
 	/**
