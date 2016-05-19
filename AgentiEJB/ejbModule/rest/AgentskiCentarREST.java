@@ -69,22 +69,22 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	public String test(){
 		String retVal = "";
 		retVal += "Trenutni cvor: " + database.getAgentskiCentar().getAlias() + " " + database.getAgentskiCentar().getAddress() + "\n\n";
-		retVal += "Agentski centri: \n\n";
+		retVal += "\nAgentski centri: \n";
 		for (AgentskiCentar ac : database.getAgentskiCentri()) {
 			retVal += ac.toString() + "\n";
 		}
 		
-		retVal += "Aktivni agenti: \n\n";
+		retVal += "\nAktivni agenti: \n";
 		for (AgentInterface ag : database.getActiveAgents()){
 			retVal += ag.toString() + "\n";
 		}
 		
-		retVal += "Podrzani tipovi agenata: \n\n";
+		retVal += "\nPodrzani tipovi agenata: \n";
 		for (AgentType at : database.getPodrzaniTipoviAgenata()){
 			retVal += at.toString() + "\n";
 		}
 		
-		retVal += "Svi tipovi agenata: \n\n";
+		retVal += "\nSvi tipovi agenata: \n";
 		for (AgentType at : database.getSviTipoviAgenata()){
 			retVal += at.toString() + "\n";
 		}
@@ -205,12 +205,13 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				// Salje se zahtev za register svim cvorovima osim master cvoru i novom cvoru (@POST /node)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
 					
-					if (!ac.getAddress().equals(database.getMasterIP()) && !ac.getAddress().equals(agentskiCentar.getAddress())){
+					if (!ac.getAddress().equals(database.getMasterIP()) /*&& !ac.getAddress().equals(agentskiCentar.getAddress()*/){
 						System.out.println("Prvi for " + agentskiCentar.getAlias());
 						target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node");
 						response = target.request().post(Entity.entity(agentskiCentar, MediaType.APPLICATION_JSON));
 					}
 				}
+				database.addAgentskiCentar(agentskiCentar);
 				
 				// Salje se spisak novih tipova agenata svim cvorovima osim masteru (@POST /agents/classes)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {

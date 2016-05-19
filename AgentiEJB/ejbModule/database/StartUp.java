@@ -17,6 +17,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
+import model.AgentType;
 import model.AgentskiCentar;
 
 @Startup
@@ -35,7 +36,6 @@ public class StartUp {
 			agentskiCentar.setAddress(InetAddress.getLocalHost().getHostAddress());
 			agentskiCentar.setAlias(InetAddress.getLocalHost().getHostName());
 			database.setAgentskiCentar(agentskiCentar);
-			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -45,13 +45,17 @@ public class StartUp {
 			System.out.println("Startup -- Master");
 			database.addAgentskiCentar(agentskiCentar);
 			
+			AgentType ping = new AgentType("Ping", "AgentiEJB");
+			database.addPodrzaniTipAgenta(ping);
+			database.addSviTipoviAgenata(ping);
+			
 		} else {
 			
 			if (!doHandshake()){
 				rollback();
 			}
 			System.out.println("Startup -- Slave");
-			
+		
 		}
 		
 	}
