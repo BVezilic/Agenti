@@ -27,12 +27,12 @@ public interface AgentskiCentarRESTRemote {
 		/**
 		 * dobavi listu svih tipova agenata na sistemu;
 		 */
-	/*
+	
 		@GET
-		@Path("/agents/classes")
+		@Path("/agents/types")
 		@Produces(MediaType.APPLICATION_JSON)
 		public List<AgentType> getAgentTypes();
-	*/
+	
 		/**
 		 * dobavi sve pokrenute agente sa sistema;
 		 */

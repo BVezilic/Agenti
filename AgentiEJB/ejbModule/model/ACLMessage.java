@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class ACLMessage implements Serializable {
+
+	private static final long serialVersionUID = 3490319159379449813L;
 	
 	private Performative performative;
 	private AID sender;

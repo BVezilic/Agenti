@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class AID implements Serializable {
 
+	private static final long serialVersionUID = -6147672430150261641L;
+	
 	private String name;
 	private AgentskiCentar host;
 	private AgentType type;

@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class AgentskiCentar implements Serializable {
 
+	private static final long serialVersionUID = 5011412853274340741L;
+	
 	private String alias;
 	private String address;
 	

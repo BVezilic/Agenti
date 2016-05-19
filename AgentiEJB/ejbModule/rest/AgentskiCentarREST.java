@@ -29,7 +29,6 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import database.Database;
 import model.ACLMessage;
 import model.AID;
-import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
@@ -96,13 +95,13 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	/**
 	 * dobavi listu svih tipova agenata na sistemu;
 	 */
-	/*
+	
 	@GET
-	@Path("/agents/classes")
+	@Path("/agents/types")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<AgentType> getAgentTypes(){ 
 		return database.getSviTipoviAgenata();
-	}*/
+	}
 	
 	/**
 	 * dobavi sve pokrenute agente sa sistema;
