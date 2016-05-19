@@ -83,7 +83,7 @@ public class Database {
 	public Boolean addActiveAgent(AgentInterface agent){
 		System.out.println("NJegov id");
 		for (AgentInterface a : activeAgents) {
-			if (a.getAID().equals(agent.getAID())){
+			if (a.getAID().getName().equals(agent.getAID().getName())){
 				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getAID().getName());
 				return false;
 			}
