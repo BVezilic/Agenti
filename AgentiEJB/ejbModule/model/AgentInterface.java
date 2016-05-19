@@ -7,5 +7,6 @@ public interface AgentInterface extends Serializable {
 	void init(AID aid);
 	void stop();
 	void handleMessage(ACLMessage aclMessage);
-	
+	void setAID(AID aid);
+	AID getAID();
 }

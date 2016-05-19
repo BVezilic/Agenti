@@ -1,22 +1,12 @@
 package database;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-
-import model.Agent;
+import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 
@@ -24,7 +14,7 @@ import model.AgentskiCentar;
 @Singleton
 public class Database {
 
-	private ArrayList<Agent> activeAgents = new ArrayList<Agent>();
+	private ArrayList<AgentInterface> activeAgents = new ArrayList<AgentInterface>();
 	private ArrayList<AgentskiCentar> agentskiCentri = new ArrayList<AgentskiCentar>();
 	
 	// Spisak agenata koji su podrzani na ovom cvoru
@@ -35,16 +25,8 @@ public class Database {
 	
 	
 	
-	//@PostConstruct
+	/*@PostConstruct
 	public void onStartup(){
-		
-		try {
-			agentskiCentar = new AgentskiCentar();
-			agentskiCentar.setAddress(InetAddress.getLocalHost().getHostAddress());
-			agentskiCentar.setAlias(InetAddress.getLocalHost().getHostName());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
 		
 		if (!isMaster()){
 			System.out.println("Nisam master");
@@ -85,9 +67,10 @@ public class Database {
 		
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget target = client.target("http://" + masterIP + ":8080/AgentiWeb/rest/agentskiCentar/node/" + agentskiCentar.getAlias());
-		/*Response response =*/ target.request().delete();
+		/*Response response = target.request().delete();
 			
 	}
+	*/
 	
 	public Boolean isMaster(){
 		if (agentskiCentar.getAddress().equals(masterIP)){
@@ -97,21 +80,21 @@ public class Database {
 		}
 	}
 	
-	public Boolean addActiveAgent(Agent agent){
+	public Boolean addActiveAgent(AgentInterface agent){
 		System.out.println("NJegov id");
-		for (Agent a : activeAgents) {
-			if (a.getId().equals(agent.getId())){
-				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getId().getName());
+		for (AgentInterface a : activeAgents) {
+			if (a.getAID().equals(agent.getAID())){
+				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getAID().getName());
 				return false;
 			}
 		}
-		System.out.println("Dodat novi aktivni agent name:" + agent.getId().getName());
+		System.out.println("Dodat novi aktivni agent name:" + agent.getAID().getName());
 		activeAgents.add(agent);
 		return true;
 	}
 	
-	public void addAllActiveAgents(List<Agent> agents){
-		for (Agent agent : agents) {
+	public void addAllActiveAgents(List<AgentInterface> agents){
+		for (AgentInterface agent : agents) {
 			addActiveAgent(agent);
 		}
 	}
@@ -165,17 +148,17 @@ public class Database {
 		}
 	}
 	
-	public Agent getActiveAgentByName(String name){
-		for (Agent agent : activeAgents) {
-			if (agent.getId().getName().equals(name)){
+	public AgentInterface getActiveAgentByName(String name){
+		for (AgentInterface agent : activeAgents) {
+			if (agent.getAID().getName().equals(name)){
 				return agent;
 			}
 		}
 		return null;
 	}
 	
-	public boolean removeActiveAgent(Agent agent){
-		for (Agent a : activeAgents){
+	public boolean removeActiveAgent(AgentInterface agent){
+		for (AgentInterface a : activeAgents){
 			if (a.equals(agent)){
 				activeAgents.remove(a);
 				return true;
@@ -185,11 +168,11 @@ public class Database {
 		return false;
 	}
 
-	public ArrayList<Agent> getActiveAgents() {
+	public ArrayList<AgentInterface> getActiveAgents() {
 		return activeAgents;
 	}
 
-	public void setActiveAgents(ArrayList<Agent> activeAgents) {
+	public void setActiveAgents(ArrayList<AgentInterface> activeAgents) {
 		this.activeAgents = activeAgents;
 	}
 

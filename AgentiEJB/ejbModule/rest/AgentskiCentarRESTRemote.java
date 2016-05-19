@@ -14,7 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import model.ACLMessage;
-import model.Agent;
+import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 import model.Performative;
@@ -39,7 +39,7 @@ public interface AgentskiCentarRESTRemote {
 		@GET
 		@Path("/agents/running")
 		@Produces(MediaType.APPLICATION_JSON)
-		public List<Agent> getActiveAgents();
+		public List<AgentInterface> getActiveAgents();
 		
 		/**
 		 * pokreni agenta određenog tipa sa zadatim imenom;
@@ -106,7 +106,7 @@ public interface AgentskiCentarRESTRemote {
 		@POST
 		@Path("/agents/running")
 		@Consumes(MediaType.APPLICATION_JSON)
-		public void sendStartedAgents(List<Agent> agents);
+		public void sendStartedAgents(List<AgentInterface> agents);
 		
 		/**
 		 * Master čvor javlja ostalim ne-master čvorovima da obrišu čvor koji nije uspeo da izvrši handshake, 

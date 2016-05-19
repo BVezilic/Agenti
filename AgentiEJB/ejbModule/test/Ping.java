@@ -1,11 +1,14 @@
 package test;
 
+import javax.ejb.Remote;
 import javax.ejb.Stateful;
 
 import model.ACLMessage;
+import model.AID;
 import model.Agent;
+import model.AgentInterface;
 
-//@Remote(AgentInterface.class)
+@Remote(AgentInterface.class)
 @Stateful
 public class Ping extends Agent {
 
@@ -22,5 +25,5 @@ public class Ping extends Agent {
 		// TODO Auto-generated method stub
 		System.out.println("STIGLA PORUKA");
 	}
-
+	
 }

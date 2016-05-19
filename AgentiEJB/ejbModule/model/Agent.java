@@ -9,6 +9,7 @@ public abstract class Agent implements AgentInterface {
 	
 	public void init(AID aid) {
 		// TODO Auto-generated method stub
+		System.out.println("INIT AGENT");
 		this.id = aid;
 		System.out.println("AGENT INITIALISED");
 	}
@@ -23,6 +24,14 @@ public abstract class Agent implements AgentInterface {
 	@Override
 	public String toString() {
 		return "Agent [id=" + id + "]";
+	}
+	
+	public void setAID(AID aid){
+		this.id = aid;
+	}
+	
+	public AID getAID(){
+		return id;
 	}
 	
 	

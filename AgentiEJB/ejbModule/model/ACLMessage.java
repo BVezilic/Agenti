@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class ACLMessage {
+public class ACLMessage implements Serializable {
 	
 	private Performative performative;
 	private AID sender;

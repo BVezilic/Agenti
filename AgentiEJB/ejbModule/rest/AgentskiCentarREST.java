@@ -34,8 +34,6 @@ import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 import model.Performative;
-import sun.management.resources.agent;
-import test.Ping;
 
 @LocalBean
 @Path("/agentskiCentar")
@@ -77,7 +75,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 		}
 		
 		retVal += "Aktivni agenti: \n\n";
-		for (Agent ag : database.getActiveAgents()){
+		for (AgentInterface ag : database.getActiveAgents()){
 			retVal += ag.toString() + "\n";
 		}
 		
@@ -112,7 +110,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@GET
 	@Path("/agents/running")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Agent> getActiveAgents(){
+	public List<AgentInterface> getActiveAgents(){
 		return database.getActiveAgents();
 	}
 	
@@ -123,12 +121,16 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running/{type}/{name}")
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
 		try {
-			System.out.println("Dodaj agenta sa imenom " + name + " " + type);
+			
 			Context context = new InitialContext();
-			Agent agent = (Agent) context.lookup("java:module/" + type);
+			AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
 			System.out.println(agent.getClass().getName());
 			agent.stop();
 			System.out.println("TEST");
+			System.out.println(database.getAgentskiCentar());
+			AgentType at = new AgentType(name,null);
+			System.out.println(at.toString());
+			
 			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(name,null)));
 			database.addActiveAgent(agent);
 			
@@ -144,7 +146,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running/{aid}")
 	public void stopAgentByAID(@PathParam("aid")String aid){
 		
-		Agent agent = database.getActiveAgentByName(aid);
+		AgentInterface agent = database.getActiveAgentByName(aid);
 		database.removeActiveAgent(agent);
 		agent.stop();
 	}
@@ -269,7 +271,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@POST
 	@Path("/agents/running")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void sendStartedAgents(List<Agent> agents){
+	public void sendStartedAgents(List<AgentInterface> agents){
 		database.addAllActiveAgents(agents);
 	}
 	
