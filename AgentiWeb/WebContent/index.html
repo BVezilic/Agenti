@@ -51,18 +51,29 @@
 	<div class="container-fluid text-center">    
 	  <div class="row content">
 	    <div class="col-sm-4 sidenav">
-	    	<div class="panel panel-primary" ng-controller="AgentListCtrl">
+	    	<div class="panel panel-default" ng-controller="AgentListCtrl">
 		    	<div class="panel-heading">Podrzani agenti</div>
 	  			<div class="panel-body">
 	  				<table class="table table-striped fixed">
 	  					<tr ng-repeat="agentType in supportedAgents">
-							<td>{{ agentType }}</td>
+							<td>{{ agentType.name }}</td>
 							<td><input type="text" ng-model="agentName"></td>
-							<td ng-if="switch"><button class="btn btn-success" ng-click="activate(agentType, agentName)">Activate</button></td>  
-			    			<td ng-if="!switch"><button class="btn btn-danger" ng-click="deactivate(agentType, agentName)">Deactivate</button></td>			    			
+							<td><button class="btn btn-success glyphicon glyphicon-ok" ng-click="activate(agentType, agentName)"></button></td>  		    			
 						</tr>			    		
 			    	</table> 
 		    	</div>		
+	    	</div>
+	    	<div class="panel panel-default" ng-controller="AgentListCtrl">
+	    		<div class="panel-heading">Aktivni agenti</div>
+	  			<div class="panel-body">
+	  				<table class="table table-striped fixed">
+	  					<tr ng-repeat="agentType in activeAgents">
+							<td>{{ agentType }}</td>
+							<td><input type="text" ng-model="agentName"></td>
+							<td><button class="btn btn-danger glyphicon glyphicon-remove" ng-click="deactivate(agentName)"></button></td>  		    			
+						</tr>			    		
+			    	</table> 
+		    	</div>
 	    	</div>
 	    </div>
 	    <div class="col-sm-4 text-left"> 
