@@ -121,16 +121,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
 		try {
 			
+			
+			System.out.println(type + " " + name);
 			Context context = new InitialContext();
 			AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
-			System.out.println(agent.getClass().getName());
-			agent.stop();
-			System.out.println("TEST");
-			System.out.println(database.getAgentskiCentar());
-			AgentType at = new AgentType(name,null);
-			System.out.println(at.toString());
-			
-			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(name,null)));
+			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
 			database.addActiveAgent(agent);
 			
 		} catch (NamingException e) {
