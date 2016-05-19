@@ -215,9 +215,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				
 				// Salje se spisak novih tipova agenata svim cvorovima osim masteru (@POST /agents/classes)
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
+					if (!ac.getAddress().equals(database.getMasterIP())){
 						System.out.println("Drugi for " + agentskiCentar.getAlias());
 						target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/classes");
 						response = target.request().post(Entity.entity(database.getSviTipoviAgenata(), MediaType.APPLICATION_JSON));
+					}
 				}
 				
 				// Salje se spisak aktivnih agenata novom cvoru
@@ -249,7 +251,8 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@GET
 	@Path("/agents/classes")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<AgentType> getSupportedAgentTypes(){ 
+	public List<AgentType> getSupportedAgentTypes(){
+		System.out.println(database.getPodrzaniTipoviAgenata());
 		return database.getPodrzaniTipoviAgenata();
 	}
 	
