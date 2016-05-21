@@ -49,7 +49,7 @@ public class WSManager {
 		try {
 			if (session.isOpen()) {
 				log.info("Websocket endpoint: " + this.hashCode() + " primio: " + msg + " u sesiji: " + session.getId());
-				//String[] parts = msg.split(";");
+				
 				
 				for (Session s : sessions) {
 					if (s.getId().equals(session.getId())) {
@@ -60,6 +60,7 @@ public class WSManager {
 				        System.out.println(ret);
 						s.getBasicRemote().sendText("login;"+ret, last);
 						log.info("Sending '" + ret + "' to : " + s.getId());
+						
 					}
 				}
 			}
