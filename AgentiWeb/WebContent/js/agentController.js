@@ -17,8 +17,7 @@ app.controller('AgentController', function($scope, $http) {
 			}
 
 			$scope.socket.onmessage = function(msg) {
-				var action = msg.data.split(";");
-				
+				console.log(msg.data);
 			}
 
 			$scope.socket.onclose = function() {

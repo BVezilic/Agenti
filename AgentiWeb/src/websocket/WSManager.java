@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -19,8 +20,11 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import database.Database;
+import model.Performative;
 
 @ServerEndpoint("/websocket")
 @Singleton
@@ -49,10 +53,13 @@ public class WSManager {
 		try {
 			if (session.isOpen()) {
 				log.info("Websocket endpoint: " + this.hashCode() + " primio: " + msg + " u sesiji: " + session.getId());
-				
-				
+				JSONObject jsonMsg = new JSONObject(msg);
 				for (Session s : sessions) {
 					if (s.getId().equals(session.getId())) {
+						switch ((String)jsonMsg.get("type")) {
+							case "getPerformative":
+								s.getBasicRemote().sendObject(Performative.values());
+						}
 						ResteasyClient client = new ResteasyClientBuilder().build();
 				        ResteasyWebTarget target = client.target("http://"+database.getMasterIP()+":8080/AgentiWeb/rest/something");
 				        Response response = target.request().get();
@@ -70,6 +77,12 @@ public class WSManager {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+		} catch (JSONException e) {
+			System.out.println("Doslo je do greske prilikom parsiranja JSON stringa");
+			e.printStackTrace();
+		} catch (EncodeException e) {
+			System.out.println("Doslo je do greske prilikom slanja objekta klijentu");
+			e.printStackTrace();
 		}
 	}
 
