@@ -8,6 +8,9 @@ import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -20,6 +23,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import database.Database;
+import model.AID;
+import model.AgentInterface;
+import model.AgentType;
 import model.Performative;
 
 @ServerEndpoint("/websocket")
@@ -53,17 +59,52 @@ public class WSManager {
 				for (Session s : sessions) {
 					if (s.getId().equals(session.getId())) {
 						switch ((String)jsonMsg.get("type")) {
-							case "getPerformative":
+							case "getPerformative": {
+								JSONObject jsonObj = new JSONObject();
 								JSONArray jsonArray = new JSONArray();
 								for (Performative p : Performative.values()) {
 									jsonArray.put(p);
 								}
-								s.getBasicRemote().sendText(jsonArray.toString());
+								jsonObj.put("data", jsonArray);
+								jsonObj.put("type", "performative");
+								s.getBasicRemote().sendText(jsonObj.toString());
 								break;
-							case "getTypes":
+							}
+							case "getTypes": {
+								JSONObject jsonObj = new JSONObject();
+								JSONArray jsonArray = new JSONArray();
+								for(AgentType at : database.getSviTipoviAgenata()){
+									jsonArray.put(new JSONObject(at));
+								}
+								jsonObj.put("data", jsonArray);
+								jsonObj.put("type", "types");
+								s.getBasicRemote().sendText(jsonObj.toString());
 								break;
-							case "getActive":
+							}
+							case "getActive": {
+								JSONObject jsonObj = new JSONObject();
+								JSONArray jsonArray = new JSONArray();
+								for(AgentInterface ai : database.getActiveAgents()){
+									jsonArray.put(new JSONObject(ai));
+								}		
+								jsonObj.put("data", jsonArray);
+								jsonObj.put("type", "active");
+								s.getBasicRemote().sendText(jsonObj.toString());
 								break;
+							}
+							case "activateAgent": {
+								try {
+									String type = jsonMsg.getString("agentType");
+									String name = jsonMsg.getString("name");
+									Context context = new InitialContext();
+									AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
+									agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
+									database.addActiveAgent(agent);									
+								} catch (NamingException e) {
+									e.printStackTrace();
+								}
+								break;
+							}
 						}
 //						ResteasyClient client = new ResteasyClientBuilder().build();
 //				        ResteasyWebTarget target = client.target("http://"+database.getMasterIP()+":8080/AgentiWeb/rest/something");

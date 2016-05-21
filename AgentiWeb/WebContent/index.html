@@ -7,8 +7,7 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script> 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script> 
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
-  <!-- <script src="js/websock.js"></script>  -->
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script src="js/agentController.js"></script>
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */ 
@@ -57,7 +56,7 @@
 	  				<table class="table table-striped fixed">
 	  					<tr ng-repeat="agentType in supportedAgents">
 							<td>{{ agentType.name }}</td>
-							<td><input type="text" ng-model="agentName" required></td>
+							<td><input type="text" ng-model="agentName"></td>
 							<td><button class="btn btn-success glyphicon glyphicon-ok" ng-click="activate(agentType, agentName)"></button></td>  		    			
 						</tr>			    		
 			    	</table> 
