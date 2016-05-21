@@ -1,6 +1,25 @@
 var app = angular.module('MyApp', []);
 app.controller('AgentController', function($scope, $http) {
 	
+	// funkcije koje socket moze da pozove
+	var getPerformative = function(){
+		var msg = {
+			type: 'getPerformative'
+		}
+		$scope.socket.send(JSON.stringify(msg));
+	}
+	var getActive = function(){
+		var msg = {
+			type: 'getActive'
+		}
+		$scope.socket.send(JSON.stringify(msg));
+	}
+	var getTypes = function() {
+		var msg = {
+			type: 'getTypes'
+		}
+		$scope.socket.send(JSON.stringify(msg));
+	}
 	// da li je podrzan websocket
 	if (!("WebSocket" in window)) {
 		$scope.podrzanWebSocket = false;
@@ -9,11 +28,14 @@ app.controller('AgentController', function($scope, $http) {
 		var host = "ws://localhost:8080/AgentiWeb/websocket";
 		try {
 			$scope.socket = new WebSocket(host);
-			log('connect. Socket Status: ' + $scope.socket.readyState + "\n");
+			console.log('connect. Socket Status: ' + $scope.socket.readyState + "\n");
 
 			$scope.socket.onopen = function() {
-				log('onopen. Socket Status: ' + $scope.socket.readyState
+				console.log('onopen. Socket Status: ' + $scope.socket.readyState
 						+ ' (open)\n');
+				getPerformative();
+				getActive();
+				getTypes();
 			}
 
 			$scope.socket.onmessage = function(msg) {
@@ -21,22 +43,17 @@ app.controller('AgentController', function($scope, $http) {
 			}
 
 			$scope.socket.onclose = function() {
-				log('onclose. Socket Status: ' + $scope.socket.readyState
+				console.log('onclose. Socket Status: ' + $scope.socket.readyState
 						+ ' (Closed)\n');
 				$scope.socket = null;
 			}
 
 		} catch (exception) {
-			log('Error' + exception + "\n");
+			console.log('Error' + exception + "\n");
 		}
 	}
 	// dobavi listu perfomativa
-	if ($scope.podrzanWebSocket) {
-		var msg = {
-			type: 'getPerformative'
-		}
-		$scope.socket.send(JSON.stringify(msg));
-	} else {
+	if (!$scope.podrzanWebSocket) {	
 		$http({
 		  method: 'GET',
 		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/message',

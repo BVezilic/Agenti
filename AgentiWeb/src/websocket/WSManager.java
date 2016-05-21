@@ -8,18 +8,14 @@ import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
-import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,15 +54,24 @@ public class WSManager {
 					if (s.getId().equals(session.getId())) {
 						switch ((String)jsonMsg.get("type")) {
 							case "getPerformative":
-								s.getBasicRemote().sendObject(Performative.values());
+								JSONArray jsonArray = new JSONArray();
+								for (Performative p : Performative.values()) {
+									jsonArray.put(p);
+								}
+								s.getBasicRemote().sendText(jsonArray.toString());
+								break;
+							case "getTypes":
+								break;
+							case "getActive":
+								break;
 						}
-						ResteasyClient client = new ResteasyClientBuilder().build();
-				        ResteasyWebTarget target = client.target("http://"+database.getMasterIP()+":8080/AgentiWeb/rest/something");
-				        Response response = target.request().get();
-				        String ret = response.readEntity(String.class);	
-				        System.out.println(ret);
-						s.getBasicRemote().sendText("login;"+ret, last);
-						log.info("Sending '" + ret + "' to : " + s.getId());
+//						ResteasyClient client = new ResteasyClientBuilder().build();
+//				        ResteasyWebTarget target = client.target("http://"+database.getMasterIP()+":8080/AgentiWeb/rest/something");
+//				        Response response = target.request().get();
+//				        String ret = response.readEntity(String.class);	
+//				        System.out.println(ret);
+//						s.getBasicRemote().sendText("login;"+ret, last);
+//						log.info("Sending '" + ret + "' to : " + s.getId());
 						
 					}
 				}
@@ -79,9 +84,6 @@ public class WSManager {
 			}
 		} catch (JSONException e) {
 			System.out.println("Doslo je do greske prilikom parsiranja JSON stringa");
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			System.out.println("Doslo je do greske prilikom slanja objekta klijentu");
 			e.printStackTrace();
 		}
 	}
