@@ -26,11 +26,13 @@ public abstract class Agent implements AgentInterface {
 		return "Agent [id=" + id + "]";
 	}
 	
-	public void setAID(AID aid){
+	@Override
+	public void setAid(AID aid){
 		this.id = aid;
 	}
 	
-	public AID getAID(){
+	@Override
+	public AID getAid(){
 		return id;
 	}
 	

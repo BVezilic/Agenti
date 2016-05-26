@@ -7,9 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.ejb.Stateful;
 import javax.naming.NamingException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -27,9 +25,10 @@ import model.AID;
 import model.AgentInterface;
 import model.AgentType;
 import model.Performative;
+import rest.ContextApp;
 
 @ServerEndpoint("/websocket")
-@Singleton
+@Stateful
 public class WSManager {
 	Logger log = Logger.getLogger("Websockets endpoint");
 	
@@ -93,16 +92,13 @@ public class WSManager {
 								break;
 							}
 							case "activateAgent": {
-								try {
-									String type = jsonMsg.getString("agentType");
-									String name = jsonMsg.getString("name");
-									Context context = new InitialContext();
-									AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
-									agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
-									database.addActiveAgent(agent);									
-								} catch (NamingException e) {
-									e.printStackTrace();
-								}
+								//TODO: Dodavanje agenta preko wsMenadzera
+								String type = jsonMsg.getString("agentType");
+								String name = jsonMsg.getString("name");
+//								Context context = new InitialContext();
+								AgentInterface agent = (AgentInterface) ContextApp.lookup("java:module/" + type);
+								agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
+								database.addActiveAgent(agent);									
 								break;
 							}
 						}
@@ -125,6 +121,9 @@ public class WSManager {
 			}
 		} catch (JSONException e) {
 			System.out.println("Doslo je do greske prilikom parsiranja JSON stringa");
+			e.printStackTrace();
+		} catch (NamingException e) {
+			System.out.println("Pukao lookup");
 			e.printStackTrace();
 		}
 	}

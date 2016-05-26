@@ -6,8 +6,6 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -102,8 +100,8 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running/{type}/{name}")
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
 		try {
-			Context context = new InitialContext();
-			AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
+			//Context context = new InitialContext();
+			AgentInterface agent = (AgentInterface) ContextApp.lookup("java:module/" + type);
 			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
 			database.addActiveAgent(agent);			
 		} catch (NamingException e) {

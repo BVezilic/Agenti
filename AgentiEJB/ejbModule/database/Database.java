@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import model.AID;
 import model.AgentInterface;
@@ -23,7 +26,21 @@ public class Database {
 	
 	private String masterIP = "192.168.1.4";
 	private AgentskiCentar agentskiCentar;
+	public static Context context = null;
 	
+	public static Context getContext() {
+		if (context == null) {
+			try {
+				context = new InitialContext();				
+			} catch (NamingException e) {
+				System.out.println("Pukla inicijlazicaija konteksta");
+				e.printStackTrace();
+			}
+			return context;
+		} else {
+			return context;
+		}
+	}
 	
 	public Boolean isMaster(){
 		if (agentskiCentar.getAddress().equals(masterIP)){
@@ -36,12 +53,12 @@ public class Database {
 	public Boolean addActiveAgent(AgentInterface agent){
 		System.out.println("NJegov id");
 		for (AgentInterface a : activeAgents) {
-			if (a.getAID().getName().equals(agent.getAID().getName())){
-				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getAID().getName());
+			if (a.getAid().getName().equals(agent.getAid().getName())){
+				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getAid().getName());
 				return false;
 			}
 		}
-		System.out.println("Dodat novi aktivni agent name:" + agent.getAID().getName());
+		System.out.println("Dodat novi aktivni agent name:" + agent.getAid().getName());
 		activeAgents.add(agent);
 		return true;
 	}
@@ -103,7 +120,7 @@ public class Database {
 	
 	public AgentInterface getActiveAgentByName(String name){
 		for (AgentInterface agent : activeAgents) {
-			if (agent.getAID().getName().equals(name)){
+			if (agent.getAid().getName().equals(name)){
 				return agent;
 			}
 		}
@@ -112,7 +129,7 @@ public class Database {
 	
 	public AgentInterface getActiveAgentByAID(AID aid){
 		for (AgentInterface agent : activeAgents) {
-			AID temp = agent.getAID();
+			AID temp = agent.getAid();
 			System.out.println(temp.getName() + " " + aid.getName());
 			System.out.println(temp.getHost());
 			if (temp.getName().equals(aid.getName()) && temp.getHost().getAlias().equals(aid.getHost().getAlias())){
