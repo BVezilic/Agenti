@@ -7,6 +7,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import model.AID;
+import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
@@ -21,7 +22,7 @@ public class Database {
 	private ArrayList<AgentType> podrzaniTipoviAgenata = new ArrayList<AgentType>();
 	private ArrayList<AgentType> sviTipoviAgenata = new ArrayList<AgentType>();
 	
-	private String masterIP = "192.168.1.4";
+	private String masterIP = "192.168.0.10";
 	private AgentskiCentar agentskiCentar;
 	
 	
@@ -34,14 +35,20 @@ public class Database {
 	}
 	
 	public Boolean addActiveAgent(AgentInterface agent){
-		System.out.println("NJegov id");
+		
+		System.out.println(agent);
+		
+		
 		for (AgentInterface a : activeAgents) {
 			if (a.getAID().getName().equals(agent.getAID().getName())){
 				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getAID().getName());
 				return false;
 			}
+			
 		}
+		
 		System.out.println("Dodat novi aktivni agent name:" + agent.getAID().getName());
+		
 		activeAgents.add(agent);
 		return true;
 	}
@@ -144,6 +151,21 @@ public class Database {
 
 	public ArrayList<AgentInterface> getActiveAgents() {
 		return activeAgents;
+	}
+	public ArrayList<AgentInterface> getAgentInterfaceFromClasses(ArrayList<Agent> agents){
+		ArrayList<AgentInterface> retVal = new ArrayList<AgentInterface>();
+		for (Agent a : agents){
+			retVal.add(a);
+		}
+		return retVal;
+	}
+	
+	public ArrayList<Agent> getActiveAgentsClasses(){
+		ArrayList<Agent> retVal = new ArrayList<Agent>();
+		for (AgentInterface agentInterface : activeAgents) {
+			retVal.add(new Agent(agentInterface.getAID()));
+		}
+		return retVal;
 	}
 
 	public void setActiveAgents(ArrayList<AgentInterface> activeAgents) {

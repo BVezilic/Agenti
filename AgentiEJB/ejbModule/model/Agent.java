@@ -1,18 +1,25 @@
 package model;
 
-public abstract class Agent implements AgentInterface {
+public class Agent implements AgentInterface {
 
 
 	private static final long serialVersionUID = -6431055503756843639L;
 	
 	protected AID id;
 	
+	public Agent(AID id){
+		this.id = id;
+	}
+	
+	public Agent(){
+		id = null;
+	}
+	
 	public void init(AID aid) {
 		// TODO Auto-generated method stub
-		System.out.println("INIT AGENT");
 		this.id = aid;
-		System.out.println("AGENT INITIALISED");
 	}
+	
 	public AID getId() {
 		return id;
 	}
@@ -32,6 +39,18 @@ public abstract class Agent implements AgentInterface {
 	
 	public AID getAID(){
 		return id;
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		System.out.println("AGENT(onaj sto je abstract) STOP");
+	}
+
+	@Override
+	public void handleMessage(ACLMessage aclMessage) {
+		// TODO Auto-generated method stub
+		System.out.println("AGENT(onaj sto je abstract) HADNLE MESSAGE");
 	}
 	
 	

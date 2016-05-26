@@ -29,6 +29,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import database.Database;
 import model.ACLMessage;
 import model.AID;
+import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
@@ -72,6 +73,19 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 		
 		return retVal;
 	}
+	
+	@GET
+	@Path("/proba")
+	public String proba(){
+		ArrayList<Agent> agents = database.getActiveAgentsClasses();
+		System.out.println(agents);
+
+		ResteasyClient client = new ResteasyClientBuilder().build();
+		ResteasyWebTarget target = client.target("http://" + database.getMasterIP() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running");
+		target.request().post(Entity.entity(agents, MediaType.APPLICATION_JSON));
+		
+		return "done";
+	}
 // KLIJENT - AGENTSKI CENTAR
 
 	/**
@@ -103,11 +117,13 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	public void startAgentByName(@PathParam("type") String type,@PathParam("name") String name){ 
 		
 		try {
-
+			
 			Context context = new InitialContext();
-			AgentInterface agent = (AgentInterface) context.lookup("java:module/" + type);
-			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
-			database.addActiveAgent(agent);
+			AgentInterface agentInterface = (AgentInterface) context.lookup("java:module/" + type);
+			agentInterface.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
+			
+			Agent agent = new Agent(agentInterface.getAID());
+			database.addActiveAgent(agentInterface);
 			
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -247,8 +263,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@POST
 	@Path("/agents/running")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void sendStartedAgents(List<AgentInterface> agents){
-		database.addAllActiveAgents(agents);
+	public void sendStartedAgents(List<Agent> agents){
+		
+		System.out.println(agents.toString());
+		ArrayList<AgentInterface> ai = database.getAgentInterfaceFromClasses((ArrayList)agents);
+		database.addAllActiveAgents(ai);
 	}
 	
 	/**
