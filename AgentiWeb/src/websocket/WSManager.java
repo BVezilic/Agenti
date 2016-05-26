@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.naming.NamingException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -20,12 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import database.Database;
-import model.AID;
 import model.AgentInterface;
 import model.AgentType;
 import model.Performative;
-import rest.ContextApp;
+import rest.AgentskiCentarREST;
 
 @ServerEndpoint("/websocket")
 @Stateful
@@ -35,7 +32,7 @@ public class WSManager {
 	List<Session> sessions = new ArrayList<Session>();
 	
 	@EJB
-	Database database;
+	AgentskiCentarREST agentskiCentar;
 	
 	public WSManager() {
 		super();
@@ -59,9 +56,10 @@ public class WSManager {
 					if (s.getId().equals(session.getId())) {
 						switch ((String)jsonMsg.get("type")) {
 							case "getPerformative": {
+								List<Performative> performative = agentskiCentar.getPerformatives();
 								JSONObject jsonObj = new JSONObject();
 								JSONArray jsonArray = new JSONArray();
-								for (Performative p : Performative.values()) {
+								for (Performative p : performative) {
 									jsonArray.put(p);
 								}
 								jsonObj.put("data", jsonArray);
@@ -70,9 +68,10 @@ public class WSManager {
 								break;
 							}
 							case "getTypes": {
+								List<AgentType> tipovi = agentskiCentar.getAgentTypes();
 								JSONObject jsonObj = new JSONObject();
 								JSONArray jsonArray = new JSONArray();
-								for(AgentType at : database.getSviTipoviAgenata()){
+								for(AgentType at : tipovi){
 									jsonArray.put(new JSONObject(at));
 								}
 								jsonObj.put("data", jsonArray);
@@ -81,9 +80,10 @@ public class WSManager {
 								break;
 							}
 							case "getActive": {
+								List<AgentInterface> aktivni = agentskiCentar.getActiveAgents();
 								JSONObject jsonObj = new JSONObject();
 								JSONArray jsonArray = new JSONArray();
-								for(AgentInterface ai : database.getActiveAgents()){
+								for(AgentInterface ai : aktivni){
 									jsonArray.put(new JSONObject(ai));
 								}		
 								jsonObj.put("data", jsonArray);
@@ -92,13 +92,15 @@ public class WSManager {
 								break;
 							}
 							case "activateAgent": {
-								//TODO: Dodavanje agenta preko wsMenadzera
 								String type = jsonMsg.getString("agentType");
 								String name = jsonMsg.getString("name");
-//								Context context = new InitialContext();
-								AgentInterface agent = (AgentInterface) ContextApp.lookup("java:module/" + type);
-								agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
-								database.addActiveAgent(agent);									
+								agentskiCentar.startAgentByName(type, name);								
+								break;
+							}
+							case "deactivateAgent": {
+								String aid = jsonMsg.getString("name");
+								String hostName = jsonMsg.getString("alias");
+								agentskiCentar.stopAgentByAID(aid, hostName);
 								break;
 							}
 						}
@@ -121,9 +123,6 @@ public class WSManager {
 			}
 		} catch (JSONException e) {
 			System.out.println("Doslo je do greske prilikom parsiranja JSON stringa");
-			e.printStackTrace();
-		} catch (NamingException e) {
-			System.out.println("Pukao lookup");
 			e.printStackTrace();
 		}
 	}

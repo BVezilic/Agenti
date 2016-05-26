@@ -24,7 +24,7 @@ public class Database {
 	private ArrayList<AgentType> podrzaniTipoviAgenata = new ArrayList<AgentType>();
 	private ArrayList<AgentType> sviTipoviAgenata = new ArrayList<AgentType>();
 	
-	private String masterIP = "192.168.1.4";
+	private String masterIP = "192.168.0.15";
 	private AgentskiCentar agentskiCentar;
 	public static Context context = null;
 	

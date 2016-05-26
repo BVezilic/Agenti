@@ -2,58 +2,10 @@ var app = angular.module('MyApp', []);
 app.controller('AgentController', function($scope, $http) {
 	// da li je podrzan websocket
 	if ("WebSocket" in window) {
-		$scope.podrzanWebSocket = true;
+		$scope.podrzanWebSocket = false;
 	} else {
 		$scope.podrzanWebSocket = false;
 	} 
-
-	// inicijalizuj podatke i startuj socket ako moze
-	if ($scope.podrzanWebSocket) {
-		var host = "ws://localhost:8080/AgentiWeb/websocket";
-		try {
-			$scope.socket = new WebSocket(host);
-			console.log('connect. Socket Status: ' + $scope.socket.readyState + "\n");
-	
-			$scope.socket.onopen = function() {
-				console.log('onopen. Socket Status: ' + $scope.socket.readyState
-						+ ' (open)\n');
-				getPerformative();
-				getActive();
-				getTypes();
-			}
-	
-			$scope.socket.onmessage = function(msg) {
-				var action = angular.fromJson(msg.data);
-				switch(action.type) {
-				case 'performative':
-					setPerformative(action.data);
-					break;
-				case 'types':
-					setTypes(action.data);
-					setReceivers(action.data);
-					break;
-				case 'active':					
-					setActive(action.data);
-					setSender(action.data);
-					break;
-				}
-			}
-	
-			$scope.socket.onclose = function() {
-				console.log('onclose. Socket Status: ' + $scope.socket.readyState
-						+ ' (Closed)\n');
-				$scope.socket = null;
-			}
-	
-		} catch (exception) {
-			console.log('Error' + exception + "\n");
-		}
-	} else {
-		getPerformative();
-		getActive();
-		getTypes();
-	}
-	
 	// getteri za promenljive preko WSMenadzera
 	var getPerformative = function(){
 		if ($scope.podrzanWebSocket) {
@@ -107,8 +59,56 @@ app.controller('AgentController', function($scope, $http) {
 			    alert('Nesto je poslo kako ne treba!');
 			  });
 		}
-		
 	}
+	
+	// inicijalizuj podatke i startuj socket ako moze
+	if ($scope.podrzanWebSocket) {
+		var host = "ws://localhost:8080/AgentiWeb/websocket";
+		try {
+			$scope.socket = new WebSocket(host);
+			console.log('connect. Socket Status: ' + $scope.socket.readyState + "\n");
+	
+			$scope.socket.onopen = function() {
+				console.log('onopen. Socket Status: ' + $scope.socket.readyState
+						+ ' (open)\n');
+				getPerformative();
+				getActive();
+				getTypes();
+			}
+	
+			$scope.socket.onmessage = function(msg) {
+				var action = angular.fromJson(msg.data);
+				switch(action.type) {
+				case 'performative':
+					setPerformative(action.data);
+					break;
+				case 'types':
+					setTypes(action.data);
+					setReceivers(action.data);
+					break;
+				case 'active':					
+					setActive(action.data);
+					setSender(action.data);
+					break;
+				}
+			}
+	
+			$scope.socket.onclose = function() {
+				console.log('onclose. Socket Status: ' + $scope.socket.readyState
+						+ ' (Closed)\n');
+				$scope.socket = null;
+			}
+	
+		} catch (exception) {
+			console.log('Error' + exception + "\n");
+		}
+	} else {
+		getPerformative();
+		getActive();
+		getTypes();
+	}
+	
+	
 	var activateAgent = function(agentType, agentName) {
 		var msg = {
 			type: 'activateAgent',
@@ -117,11 +117,11 @@ app.controller('AgentController', function($scope, $http) {
 		}
 		$scope.socket.send(JSON.stringify(msg));
 	}
-	var deactivateAgent = function(agentAID) {
+	var deactivateAgent = function(name, alias) {
 		var msg = {
-			type: 'activateAgent',
-			name: agentName,
-			agentType: agentType
+			type: 'deactivateAgent',
+			name: name,
+			alias: alias
 		}
 		$scope.socket.send(JSON.stringify(msg));
 	}
@@ -129,6 +129,9 @@ app.controller('AgentController', function($scope, $http) {
 	// posalji koji agent treba da se aktivira 
     $scope.activate = function(agentType, agentName) {
     	if ($scope.podrzanWebSocket) {	
+    		activateAgent(agentType.name, agentName);
+    		getActive();
+    	} else {
 	    	$http({
 			  method: 'PUT',
 			  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running/'+agentType.name+'/'+agentName
@@ -145,36 +148,33 @@ app.controller('AgentController', function($scope, $http) {
 					  });
 			  }, function errorCallback(response) {
 			    alert('Nesto je poslo kako ne treba!');
-			  });
-    	} else {
-    		activateAgent(agentType.name, agentName);
-    		getActive();
+			  });    		    		
     	}
     };
     
     // posalji zahtev da se deaktivira odredjen agent
     $scope.deactivate = function(agentAID) { 
     	if ($scope.podrzanWebSocket) {
-	    	$http({
-	  		  method: 'DELETE',
-	  		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running/'+agentAID.name+'/'+agentAID.host.alias
-	  		}).then(function successCallback(response) {
-	  			// povuci listu activnih agenata
-	  			$http({
-					  method: 'GET',
-					  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running'
-					}).then(function successCallback(response) {
-						setActive(response.data);
-						setSender(response.data);
-					  }, function errorCallback(response) {
-					    alert('Nesto je poslo kako ne treba prilikom dodavanja liste aktivnih agenata!');
-					  });
-	  		  }, function errorCallback(response) {
-	  		    alert('Nesto je poslo kako ne treba!');
-	  		  });
+    		deactivateAgent(agentAID.name, agentAID.host.alias);
+    		getActive();	  		 
     	} else {
-    		deactivateAgent(agentType.name, agentName);
-    		getActive();
+    		$http({
+  	  		  method: 'DELETE',
+  	  		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running/'+agentAID.name+'/'+agentAID.host.alias
+  	  		}).then(function successCallback(response) {
+  	  			// povuci listu activnih agenata
+  	  			$http({
+  					  method: 'GET',
+  					  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/running'
+  					}).then(function successCallback(response) {
+  						setActive(response.data);
+  						setSender(response.data);
+  					  }, function errorCallback(response) {
+  					    alert('Nesto je poslo kako ne treba prilikom dodavanja liste aktivnih agenata!');
+  					  });
+  	  		  }, function errorCallback(response) {
+  	  		    alert('Nesto je poslo kako ne treba!');
+  	  		});
     	}
     };
     
