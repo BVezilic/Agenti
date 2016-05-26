@@ -1,14 +1,51 @@
 var app = angular.module('MyApp', []);
 app.controller('AgentController', function($scope, $http) {
+	
+	// da li je podrzan websocket
+	if (!("WebSocket" in window)) {
+		$scope.podrzanWebSocket = false;
+	} else {
+		$scope.podrzanWebSocket = true;
+		var host = "ws://localhost:8080/AgentiWeb/websocket";
+		try {
+			$scope.socket = new WebSocket(host);
+			log('connect. Socket Status: ' + $scope.socket.readyState + "\n");
+
+			$scope.socket.onopen = function() {
+				log('onopen. Socket Status: ' + $scope.socket.readyState
+						+ ' (open)\n');
+			}
+
+			$scope.socket.onmessage = function(msg) {
+				console.log(msg.data);
+			}
+
+			$scope.socket.onclose = function() {
+				log('onclose. Socket Status: ' + $scope.socket.readyState
+						+ ' (Closed)\n');
+				$scope.socket = null;
+			}
+
+		} catch (exception) {
+			log('Error' + exception + "\n");
+		}
+	}
 	// dobavi listu perfomativa
-	$http({
-	  method: 'GET',
-	  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/message',
-	}).then(function successCallback(response) {
-		$scope.performative = response.data;
-	  }, function errorCallback(response) {
-	    alert('Nesto je poslo kako ne treba!');
-	  });
+	if ($scope.podrzanWebSocket) {
+		var msg = {
+			type: 'getPerformative'
+		}
+		$scope.socket.send(JSON.stringify(msg));
+	} else {
+		$http({
+		  method: 'GET',
+		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/message',
+		}).then(function successCallback(response) {
+			$scope.performative = response.data;
+		  }, function errorCallback(response) {
+		    alert('Nesto je poslo kako ne treba!');
+		  });
+	}
 	
 	// dobavi listu svih tipova agenata koji agentski centar podrazava
 	$http({
