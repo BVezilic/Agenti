@@ -10,7 +10,7 @@ public class ACLMessage implements Serializable {
 	
 	private Performative performative;
 	private AID sender;
-	private AID[] recieves;
+	private AID[] receivers;
 	private AID replyTo;
 	private String content;
 	private Object contentObj;
@@ -43,12 +43,12 @@ public class ACLMessage implements Serializable {
 		this.sender = sender;
 	}
 
-	public AID[] getRecieves() {
-		return recieves;
+	public AID[] getReceivers() {
+		return receivers;
 	}
 
-	public void setRecieves(AID[] recieves) {
-		this.recieves = recieves;
+	public void setReceivers(AID[] receivers) {
+		this.receivers = receivers;
 	}
 
 	public AID getReplyTo() {
@@ -142,11 +142,12 @@ public class ACLMessage implements Serializable {
 	@Override
 	public String toString() {
 		return "ACLPoruka [performative=" + performative + ", sender=" + sender + ", recieves="
-				+ Arrays.toString(recieves) + ", replyTo=" + replyTo + ", content=" + content + ", contentObj="
+				+ Arrays.toString(receivers) + ", replyTo=" + replyTo + ", content=" + content + ", contentObj="
 				+ contentObj + ", userArgs=" + userArgs + ", language=" + language + ", encoding=" + encoding
 				+ ", ontology=" + ontology + ", protocol=" + protocol + ", conversationID=" + conversationID
 				+ ", replyWith=" + replyWith + ", replyBy=" + replyBy + "]";
 	}
+
 	
 	
 	

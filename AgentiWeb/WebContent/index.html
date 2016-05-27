@@ -53,12 +53,14 @@
 	    	<div class="panel panel-default">
 		    	<div class="panel-heading">Podrzani agenti</div>
 	  			<div class="panel-body">
-	  				<table class="table table-striped fixed">
+	  				<table class="table table-striped fixed">	  					
 	  					<tr ng-repeat="agentType in supportedAgents">
+	  						<form name="agents">
 							<td>{{ agentType.name }}</td>
-							<td><input type="text" ng-model="agentName"></td>
-							<td><button class="btn btn-success glyphicon glyphicon-ok" ng-click="activate(agentType, agentName)"></button></td>  		    			
-						</tr>			    		
+							<td><input type="text" name="agentName" ng-model="agentName" required></td>
+							<td><button class="btn btn-success glyphicon glyphicon-ok" ng-click="activate(agentType, agentName)" ng-disabled=""></button></td>
+							</form>	  		    			
+						</tr>			    							
 			    	</table> 
 		    	</div>		
 	    	</div>
@@ -91,7 +93,7 @@
 			    </div>
 			    <div class="form-group">
 			      <label for="receivers">Receivers:</label>
-			      <select class="form-control" ng-model="selectedReceiver" ng-options="x.name for x in receivers">
+			      <select class="form-control" ng-model="selectedReceiver" ng-options="x.aid.name for x in receivers">
 				  </select>
 			    </div>
 			    <div class="form-group">
@@ -130,7 +132,7 @@
 			      <label for="replyBy">Reply by:</label>
 			      <input type="text" class="form-control" id="replyBy">
 			    </div>
-			    <button class="btn btn-primary" id="submit">Posalji poruku</button>
+			    <button class="btn btn-primary" id="submit" ng-click="sendMessage()">Posalji poruku</button>
 	    	</div>
 	      </div>
 	    </div>

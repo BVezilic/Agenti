@@ -147,6 +147,16 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/messages")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendACLMessage(ACLMessage aclMessage){
+		System.out.println("Primio sam poruku:" + aclMessage.toString());
+	}
+	
+	/**
+	 * primi ACL poruku
+	 */
+	@POST
+	@Path("/messages/recieve")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void recieveACLMessage(ACLMessage aclMessage){
 	
 	}
 	

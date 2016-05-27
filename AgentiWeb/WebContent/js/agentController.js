@@ -1,52 +1,5 @@
 var app = angular.module('MyApp', []);
 app.controller('AgentController', function($scope, $http) {
-<<<<<<< HEAD
-	
-	// da li je podrzan websocket
-	if (!("WebSocket" in window)) {
-		$scope.podrzanWebSocket = false;
-	} else {
-		$scope.podrzanWebSocket = true;
-		var host = "ws://localhost:8080/AgentiWeb/websocket";
-		try {
-			$scope.socket = new WebSocket(host);
-			log('connect. Socket Status: ' + $scope.socket.readyState + "\n");
-
-			$scope.socket.onopen = function() {
-				log('onopen. Socket Status: ' + $scope.socket.readyState
-						+ ' (open)\n');
-			}
-
-			$scope.socket.onmessage = function(msg) {
-				console.log(msg.data);
-			}
-
-			$scope.socket.onclose = function() {
-				log('onclose. Socket Status: ' + $scope.socket.readyState
-						+ ' (Closed)\n');
-				$scope.socket = null;
-			}
-
-		} catch (exception) {
-			log('Error' + exception + "\n");
-		}
-	}
-	// dobavi listu perfomativa
-	if ($scope.podrzanWebSocket) {
-		var msg = {
-			type: 'getPerformative'
-		}
-		$scope.socket.send(JSON.stringify(msg));
-	} else {
-		$http({
-		  method: 'GET',
-		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/message',
-		}).then(function successCallback(response) {
-			$scope.performative = response.data;
-		  }, function errorCallback(response) {
-		    alert('Nesto je poslo kako ne treba!');
-		  });
-=======
 	// da li je podrzan websocket
 	if ("WebSocket" in window) {
 		$scope.podrzanWebSocket = false;
@@ -84,6 +37,7 @@ app.controller('AgentController', function($scope, $http) {
 			}).then(function successCallback(response) {
 				setActive(response.data);
 				setSender(response.data);
+				setReceivers(response.data);
 			  }, function errorCallback(response) {
 			    alert('Nesto je poslo kako ne treba!');
 			  });
@@ -100,13 +54,11 @@ app.controller('AgentController', function($scope, $http) {
 			  method: 'GET',
 			  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/agents/types'
 			}).then(function successCallback(response) {
-				$scope.supportedAgents = response.data;
-				$scope.receivers = response.data;
+				setTypes(response.data);
 			  }, function errorCallback(response) {
 			    alert('Nesto je poslo kako ne treba!');
 			  });
 		}
->>>>>>> refs/heads/websocket
 	}
 	
 	// inicijalizuj podatke i startuj socket ako moze
@@ -132,11 +84,11 @@ app.controller('AgentController', function($scope, $http) {
 					break;
 				case 'types':
 					setTypes(action.data);
-					setReceivers(action.data);
 					break;
 				case 'active':					
 					setActive(action.data);
 					setSender(action.data);
+					setReceivers(action.data);
 					break;
 				}
 			}
@@ -191,6 +143,7 @@ app.controller('AgentController', function($scope, $http) {
 					}).then(function successCallback(response) {
 						setActive(response.data);
 						setSender(response.data);
+						setReceivers(response.data);
 					  }, function errorCallback(response) {
 					    alert('Nesto je poslo kako ne treba!');
 					  });
@@ -228,9 +181,9 @@ app.controller('AgentController', function($scope, $http) {
     
     $scope.sendMessage = function(){
 		var ACLMessage = {
-			performative: $scope.performative,
-			sender: $scope.sender,
-			receivers: $scope.receivers,
+			performative: $scope.selectedPerform,
+			sender: $scope.selectedSender.aid,
+			receivers: [$scope.selectedReceiver.aid],
 			replyTo: $scope.replyTo,
 			content: $scope.content,
 			language: $scope.language,
@@ -246,7 +199,7 @@ app.controller('AgentController', function($scope, $http) {
 		$http({
 		  method: 'POST',
 		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
-		  data: angular.toJson(ACLMessage)
+		  data: ACLMessage
 		}).then(function successCallback(response) {
 			alert('Uspeo sam!');
 		  }, function errorCallback(response) {
