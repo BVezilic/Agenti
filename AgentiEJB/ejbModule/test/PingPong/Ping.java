@@ -1,4 +1,4 @@
-package test;
+package test.PingPong;
 
 import javax.ejb.EJB;
 import javax.ejb.Remote;
