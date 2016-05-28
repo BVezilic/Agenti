@@ -27,6 +27,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import database.Database;
+import jms.JMSQueue;
 import model.ACLMessage;
 import model.AID;
 import model.Agent;
@@ -105,8 +106,12 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@GET
 	@Path("/agents/running")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<AgentInterface> getActiveAgents(){
-		return database.getActiveAgents();
+	public List<AID> getActiveAgents(){
+		List<AID> aids = new ArrayList<>();
+		for (AgentInterface ai : database.getActiveAgents()) {
+			aids.add(ai.getAid());
+		}
+		return aids;
 	}
 	
 	/**
@@ -147,7 +152,8 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/messages")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void sendACLMessage(ACLMessage aclMessage){
-		System.out.println("Primio sam poruku:" + aclMessage.toString());
+		// prosledi message na QUEUE
+		new JMSQueue(aclMessage);
 	}
 	
 	/**
@@ -266,6 +272,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	/**
 	 * Master čvor dostavlja spisak pokrenutih agenata novom ne-master čvoru koji se nalaze kod njega ili nekog od preostalih ne-master čvorova;
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@POST
 	@Path("/agents/running")
 	@Consumes(MediaType.APPLICATION_JSON)

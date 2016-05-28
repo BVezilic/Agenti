@@ -147,9 +147,5 @@ public class ACLMessage implements Serializable {
 				+ ", ontology=" + ontology + ", protocol=" + protocol + ", conversationID=" + conversationID
 				+ ", replyWith=" + replyWith + ", replyBy=" + replyBy + "]";
 	}
-
-	
-	
-	
 	
 }

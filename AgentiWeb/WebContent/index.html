@@ -58,7 +58,7 @@
 	  						<form name="agents">
 							<td>{{ agentType.name }}</td>
 							<td><input type="text" name="agentName" ng-model="agentName" required></td>
-							<td><button class="btn btn-success glyphicon glyphicon-ok" ng-click="activate(agentType, agentName)" ng-disabled=""></button></td>
+							<td align="right"><button class="btn btn-success glyphicon glyphicon-ok" ng-click="activate(agentType, agentName)"></button></td>
 							</form>	  		    			
 						</tr>			    							
 			    	</table> 
@@ -68,10 +68,10 @@
 	    		<div class="panel-heading">Aktivni agenti</div>
 	  			<div class="panel-body">
 	  				<table class="table table-striped fixed">
-	  					<tr ng-repeat="agentType in activeAgents">
-							<td>{{ agentType.aid.type.name }}</td>
-							<td>{{ agentType.aid.name }}</td>
-							<td><button class="btn btn-danger glyphicon glyphicon-remove" ng-click="deactivate(agentType.aid)"></button></td> 	    			
+	  					<tr ng-repeat="aid in activeAgents">
+							<td>{{ aid.type.name }}</td>
+							<td>{{ aid.name }}</td>
+							<td align="right"><button class="btn btn-danger glyphicon glyphicon-remove" ng-click="deactivate(aid)"></button></td> 	    			
 						</tr>			    		
 			    	</table> 
 		    	</div>
@@ -88,49 +88,49 @@
 			    </div>
 			    <div class="form-group">
 			      <label for="sender">Sender:</label>
-			      <select class="form-control" ng-model="selectedSender" ng-options="x.aid.name for x in sender">
+			      <select class="form-control" ng-model="selectedSender" ng-options="x.name for x in sender">
 				  </select>
 			    </div>
 			    <div class="form-group">
 			      <label for="receivers">Receivers:</label>
-			      <select class="form-control" ng-model="selectedReceiver" ng-options="x.aid.name for x in receivers">
+			      <select class="form-control" multiple="true" ng-model="selectedReceiver" ng-options="x.name for x in receivers">
 				  </select>
 			    </div>
 			    <div class="form-group">
 			      <label for="replyTo">Reply to:</label>
-			      <input type="text" class="form-control" id="replyTo">
+			      <input type="text" class="form-control" ng-model="selectedReplyTo" id="replyTo">
 			    </div>
 			    <div class="form-group">
 			      <label for="content">Content:</label>
-			      <input type="text" class="form-control" id="content">
+			      <input type="text" class="form-control" ng-model="selectedContent" id="content">
 			    </div>		  
 			    <div class="form-group">
 			      <label for="language">Language:</label>
-			      <input type="text" class="form-control" id="language">
+			      <input type="text" class="form-control" ng-model="selectedLanguage" id="language">
 			    </div>
 			    <div class="form-group">
 			      <label for="encoding">Encoding:</label>
-			      <input type="text" class="form-control" id="encoding">
+			      <input type="text" class="form-control" ng-model="selectedEncoding" id="encoding">
 			    </div>
 			    <div class="form-group">
 			      <label for="ontology">Ontology:</label>
-			      <input type="text" class="form-control" id="ontology">
+			      <input type="text" class="form-control" ng-model="selectedOntology" id="ontology">
 			    </div>
 			    <div class="form-group">
 			      <label for="protocol">Protocol:</label>
-			      <input type="text" class="form-control" id="protocol">
+			      <input type="text" class="form-control" ng-model="selectedProtocol" id="protocol">
 			    </div>
 			    <div class="form-group">
 			      <label for="conversationId">Conversation ID:</label>
-			      <input type="text" class="form-control" id="conversationId">
+			      <input type="text" class="form-control" ng-model="selectedConversationId" id="conversationId">
 			    </div>
 			    <div class="form-group">
 			      <label for="replyWith">Reply with:</label>
-			      <input type="text" class="form-control" id="replyWith">
+			      <input type="text" class="form-control" ng-model="selectedReplyWith" id="replyWith">
 			    </div>
 			    <div class="form-group">
 			      <label for="replyBy">Reply by:</label>
-			      <input type="text" class="form-control" id="replyBy">
+			      <input type="text" class="form-control" ng-model="selectedReplyBy" id="replyBy">
 			    </div>
 			    <button class="btn btn-primary" id="submit" ng-click="sendMessage()">Posalji poruku</button>
 	    	</div>
@@ -138,8 +138,10 @@
 	    </div>
 	    <div class="col-sm-4 sidenav">
 	      <div class="well">
-	        <p>Konzola koja ce ispisivati stanja agenata</p>
-	      </div>
+	        <p ng-model="consoleLog"></p>
+	        <button class="btn btn-primary" ng-click="clearConsole()">Clear console</button>
+	   	  </div>
+	      
 	      <div class="well">
 	        <p>Ako bude jos nesto trebalo da se doda, stavicemo ovde</p>
 	      </div>

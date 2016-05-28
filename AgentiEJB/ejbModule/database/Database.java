@@ -1,13 +1,12 @@
 package database;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.websocket.Session;
 
 import model.AID;
 import model.Agent;
@@ -25,23 +24,10 @@ public class Database {
 	private ArrayList<AgentType> podrzaniTipoviAgenata = new ArrayList<AgentType>();
 	private ArrayList<AgentType> sviTipoviAgenata = new ArrayList<AgentType>();
 	
+	private ArrayList<Session> sessions = new ArrayList<Session>();
+	
 	private String masterIP = "192.168.1.6";
 	private AgentskiCentar agentskiCentar;
-	public static Context context = null;
-	
-	public static Context getContext() {
-		if (context == null) {
-			try {
-				context = new InitialContext();				
-			} catch (NamingException e) {
-				System.out.println("Pukla inicijlazicaija konteksta");
-				e.printStackTrace();
-			}
-			return context;
-		} else {
-			return context;
-		}
-	}
 	
 	public Boolean isMaster(){
 		if (agentskiCentar.getAddress().equals(masterIP)){
@@ -229,6 +215,18 @@ public class Database {
 		this.sviTipoviAgenata = sviTipoviAgenata;
 	}
 
-	
+	public ArrayList<Session> getSessions() {
+		return sessions;
+	}
+
+	public void setSessions(ArrayList<Session> sessions) {
+		this.sessions = sessions;
+	}
+
+	public void sendMessage(String msg) throws IOException {
+		for (Session s : sessions) {
+			s.getBasicRemote().sendText(msg);
+		}
+	}
 	
 }

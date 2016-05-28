@@ -51,6 +51,4 @@ public class AID implements Serializable {
 		return "AID [name=" + name + ", host=" + host + ", type=" + type + "]";
 	}
 	
-	
-	
 }

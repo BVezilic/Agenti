@@ -14,8 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import model.ACLMessage;
+import model.AID;
 import model.Agent;
-import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 import model.Performative;
@@ -40,9 +40,9 @@ public interface AgentskiCentarRESTRemote {
 		@GET
 		@Path("/agents/running")
 		@Produces(MediaType.APPLICATION_JSON)
-		public List<AgentInterface> getActiveAgents();
+		public List<AID> getActiveAgents();
 		
-		/**
+		/**o
 		 * pokreni agenta određenog tipa sa zadatim imenom;
 		 */
 		@PUT

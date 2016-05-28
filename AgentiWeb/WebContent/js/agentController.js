@@ -90,6 +90,8 @@ app.controller('AgentController', function($scope, $http) {
 					setSender(action.data);
 					setReceivers(action.data);
 					break;
+				case 'consoleLog':
+					addMessage(action.data);
 				}
 			}
 	
@@ -107,7 +109,6 @@ app.controller('AgentController', function($scope, $http) {
 		getActive();
 		getTypes();
 	}
-	
 	
 	var activateAgent = function(agentType, agentName) {
 		var msg = {
@@ -182,17 +183,17 @@ app.controller('AgentController', function($scope, $http) {
     $scope.sendMessage = function(){
 		var ACLMessage = {
 			performative: $scope.selectedPerform,
-			sender: $scope.selectedSender.aid,
-			receivers: [$scope.selectedReceiver.aid],
-			replyTo: $scope.replyTo,
-			content: $scope.content,
-			language: $scope.language,
-			encoding: $scope.encoding,
-			ontology: $scope.ontology,
-			protocol: $scope.protocol,
-			conversationId: $scope.conversatonId,
-			replyWith: $scope.replyWith,
-			replayBy: $scope.replyBy
+			sender: $scope.selectedSender,
+			receivers: $scope.selectedReceiver,
+			replyTo: $scope.selectedReplyTo,
+			content: $scope.selectedContent,
+			language: $scope.selectedLanguage,
+			encoding: $scope.selectedEncoding,
+			ontology: $scope.selectedOntology,
+			protocol: $scope.selectedProtocol,
+			conversationId: $scope.selectedConversatonId,
+			replyWith: $scope.selectedReplyWith,
+			replayBy: $scope.selectedReplyBy
 		}
 		
 		// posalji poruku
@@ -207,6 +208,9 @@ app.controller('AgentController', function($scope, $http) {
 		  });
 	}
     
+    $scope.clearMessage = new function() {
+		$scope.consoleLog = "";
+	}
     //setteri
 	var setPerformative = function(data){
 		$scope.performative = data;
@@ -222,5 +226,8 @@ app.controller('AgentController', function($scope, $http) {
 	}
 	var setSender = function(data) {
 		$scope.sender = data;
+	}
+	var addMessage = function(data) {
+		$scope.consoleLog = data; 
 	}
 });

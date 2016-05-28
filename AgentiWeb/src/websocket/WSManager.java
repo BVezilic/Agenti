@@ -19,7 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import model.AgentInterface;
+import database.Database;
+import model.AID;
 import model.AgentType;
 import model.Performative;
 import rest.AgentskiCentarREST;
@@ -34,6 +35,9 @@ public class WSManager {
 	@EJB
 	AgentskiCentarREST agentskiCentar;
 	
+	@EJB
+	Database database;
+	
 	public WSManager() {
 		super();
 	}
@@ -42,6 +46,7 @@ public class WSManager {
 	public void onOpen(Session session) {
 		if (!sessions.contains(session)) {
 			sessions.add(session);
+			database.getSessions().add(session);
 			log.info("Dodao sesiju: " + session.getId() + " u endpoint-u: " + this.hashCode() + ", ukupno sesija: " + sessions.size());
 		}
 	}
@@ -80,10 +85,10 @@ public class WSManager {
 								break;
 							}
 							case "getActive": {
-								List<AgentInterface> aktivni = agentskiCentar.getActiveAgents();
+								List<AID> aktivni = agentskiCentar.getActiveAgents();
 								JSONObject jsonObj = new JSONObject();
 								JSONArray jsonArray = new JSONArray();
-								for(AgentInterface ai : aktivni){
+								for(AID ai : aktivni){
 									jsonArray.put(new JSONObject(ai));
 								}		
 								jsonObj.put("data", jsonArray);
@@ -129,12 +134,14 @@ public class WSManager {
 	@OnClose
 	public void close(Session session) {
 		sessions.remove(session);
+		database.getSessions().remove(session);
 		log.info("Zatvorio: " + session.getId() + " u endpoint-u: " + this.hashCode());
 	}
 	
 	@OnError
 	public void error(Session session, Throwable t) {
 		sessions.remove(session);
+		database.getSessions().remove(session);
 		log.log(Level.SEVERE, "Greška u sessiji: " + session.getId() + " u endpoint-u: " + this.hashCode() + ", tekst: " + t.getMessage());
 		t.printStackTrace();
 	}

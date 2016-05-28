@@ -7,12 +7,15 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueReceiver;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+
+import model.ACLMessage;
 
 /**
  * 
@@ -59,7 +62,7 @@ public class JMSQueue implements MessageListener {
 		}
 	}
 
-	public JMSQueue(String message, String type) {
+	public JMSQueue(ACLMessage aclMessage) {
 		try {
 			Context context = new InitialContext();
 			
@@ -76,11 +79,11 @@ public class JMSQueue implements MessageListener {
 			MessageConsumer consumer = session.createConsumer(queue);
 			consumer.setMessageListener(this);
 
-		    TextMessage msg = session.createTextMessage(message);
+		    ObjectMessage msg = session.createObjectMessage(aclMessage);
 		    // The sent timestamp acts as the message's ID
 		    long sent = System.currentTimeMillis();
 		    msg.setLongProperty("sent", sent);
-		    msg.setStringProperty("type", type);
+		    //msg.setStringProperty("type", type);
 		    
 			MessageProducer producer = session.createProducer(queue);
 			producer.send(msg);
