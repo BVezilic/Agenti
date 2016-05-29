@@ -42,7 +42,7 @@ public class Ping extends Agent {
 			aclMessage.setConversationID(poruka.getConversationID());
 			aclMessage.setPerformative(Performative.REQUEST);
 			// posalji poruku
-			sendToPong(poruka.getContent(), poruka);
+			sendToPong(poruka.getContent(), aclMessage);
 		} else if (poruka.getPerformative().equals(Performative.INFORM)){
 			
 		}
@@ -59,7 +59,7 @@ public class Ping extends Agent {
 	private AID[] findPongByAddress(String address) {
 		AID[] receivers = new AID[1];
 		for (AgentInterface ai : database.getActiveAgents()) {
-			if (ai.getAid().getName().equals("Pong") && ai.getAid().getHost().getAddress().equals(address)) {
+			if (ai.getAid().getType().getName().equals("Pong") && ai.getAid().getHost().getAddress().equals(address)) {
 				receivers[0] = ai.getAid();
 				break;
 			}

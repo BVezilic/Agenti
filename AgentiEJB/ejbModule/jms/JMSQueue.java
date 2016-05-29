@@ -2,6 +2,7 @@ package jms;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -86,6 +87,7 @@ public class JMSQueue implements MessageListener {
 		    //msg.setStringProperty("type", type);
 		    
 			MessageProducer producer = session.createProducer(queue);
+			producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 			producer.send(msg);
 			//Thread.sleep(1000);
 			System.out.println("Message published. Please check application server's console to see the response from MDB.");

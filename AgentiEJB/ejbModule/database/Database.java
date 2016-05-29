@@ -8,6 +8,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.websocket.Session;
 
+import model.ACLMessage;
 import model.AID;
 import model.Agent;
 import model.AgentInterface;
@@ -25,6 +26,7 @@ public class Database {
 	private ArrayList<AgentType> sviTipoviAgenata = new ArrayList<AgentType>();
 	
 	private ArrayList<Session> sessions = new ArrayList<Session>();
+	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
 	private String masterIP = "192.168.1.6";
 	private AgentskiCentar agentskiCentar;
@@ -227,6 +229,14 @@ public class Database {
 		for (Session s : sessions) {
 			s.getBasicRemote().sendText(msg);
 		}
+	}
+
+	public ArrayList<ACLMessage> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(ArrayList<ACLMessage> messages) {
+		this.messages = messages;
 	}
 	
 }

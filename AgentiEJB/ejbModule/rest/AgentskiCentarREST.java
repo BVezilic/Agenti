@@ -72,6 +72,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 			retVal += at.toString() + "\n";
 		}
 		
+		retVal += "\nSve poruke: \n";
+		for (ACLMessage at : database.getMessages()){
+			retVal += at.toString() + "\n";
+		}
+		
 		return retVal;
 	}
 	
@@ -157,13 +162,13 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	}
 	
 	/**
-	 * primi ACL poruku
+	 * dobavi sve ACL poruke
 	 */
-	@POST
-	@Path("/messages/recieve")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public void recieveACLMessage(ACLMessage aclMessage){
-	
+	@GET
+	@Path("/messages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<ACLMessage> getACLMessages(){
+		return database.getMessages();
 	}
 	
 	/**

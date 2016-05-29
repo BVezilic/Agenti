@@ -35,9 +35,9 @@ public class Pong extends Agent {
 			aclMessage.setSender(this.getAid());
 			aclMessage.setReceivers(new AID[]{poruka.getSender()});
 			aclMessage.setConversationID(poruka.getConversationID());
-			aclMessage.setPerformative(Performative.REQUEST);
+			aclMessage.setPerformative(Performative.INFORM);
 			// posalji poruku
-			sendToPing(poruka.getReceivers()[0].getHost().getAddress(), poruka);
+			sendToPing(poruka.getReceivers()[0].getHost().getAddress(), aclMessage);
 		}
 		System.out.println("PONG - STIGLA PORUKA");
 	}

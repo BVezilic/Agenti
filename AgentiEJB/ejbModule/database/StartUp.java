@@ -49,6 +49,10 @@ public class StartUp {
 			database.addPodrzaniTipAgenta(ping);
 			database.addSviTipoviAgenata(ping);
 			
+			AgentType pong = new AgentType("Pong", "AgentiEJB");
+			database.addPodrzaniTipAgenta(pong);
+			database.addSviTipoviAgenata(pong);
+			
 		} else {
 			
 			AgentType pong = new AgentType("Pong", "AgentiEJB");
