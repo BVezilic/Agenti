@@ -166,9 +166,15 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	 */
 	@GET
 	@Path("/messages")
-	@Produces(MediaType.APPLICATION_JSON)
-	public ArrayList<ACLMessage> getACLMessages(){
-		return database.getMessages();
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getACLMessages(){
+		String retVal = "";
+		for (ACLMessage aclMessage : database.getMessages()) {
+			retVal += "Message from: " + aclMessage.getSender().getName() + " to " 
+		+ aclMessage.getReceivers()[0].getName() 
+		+ "with performative" + aclMessage.getPerformative() + "/n";
+		}
+		return retVal;
 	}
 	
 	/**

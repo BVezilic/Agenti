@@ -1,5 +1,5 @@
 var app = angular.module('MyApp', []);
-app.controller('AgentController', function($scope, $http) {
+app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 	// da li je podrzan websocket
 	if ("WebSocket" in window) {
 		$scope.podrzanWebSocket = false;
@@ -202,10 +202,18 @@ app.controller('AgentController', function($scope, $http) {
 		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
 		  data: ACLMessage
 		}).then(function successCallback(response) {
-			alert('Uspeo sam!');
+//			$http({
+//			  method: 'GET',
+//			  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
+//			}).then(function successCallback(response) {
+//				$timeout(addMessage(response.data), 5000);
+//			  }, function errorCallback(response) {
+//			    alert('Nesto je poslo kako ne treba!');
+//			  });
 		  }, function errorCallback(response) {
 		    alert('Nesto je poslo kako ne treba!');
 		  });
+		
 	}
     
     $scope.clearMessage = new function() {

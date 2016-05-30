@@ -53,6 +53,10 @@ public class StartUp {
 			database.addPodrzaniTipAgenta(pong);
 			database.addSviTipoviAgenata(pong);
 			
+			AgentType map = new AgentType("Map", "AgentiEJB");
+			database.addPodrzaniTipAgenta(map);
+			database.addSviTipoviAgenata(map);
+			
 		} else {
 			
 			AgentType pong = new AgentType("Pong", "AgentiEJB");
