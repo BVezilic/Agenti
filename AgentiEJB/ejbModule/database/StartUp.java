@@ -111,7 +111,7 @@ public class StartUp {
 	public void timer(){
 		AgentskiCentar agentskiCentar = database.getAgentskiCentar();
 		for (AgentskiCentar ac : database.getAgentskiCentri()){
-			if (!ac.getAlias().equals(agentskiCentar.getAddress())){
+			if (!ac.getAddress().equals(agentskiCentar.getAddress())){
 				
 				boolean flag = checkBeat(ac);
 				// prvi pokusaj
@@ -129,7 +129,6 @@ public class StartUp {
 	
 	public boolean checkBeat(AgentskiCentar ac){
 		
-		System.out.println("TEST");
 		try {
 			ResteasyClient client = new ResteasyClientBuilder().build();
 			ResteasyWebTarget target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node/");
