@@ -316,6 +316,14 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/node/{alias}")
 	public void rollback(@PathParam("alias") String alias){ 
 		
+		AgentskiCentar ac = database.getAgentskiCentarByName(alias);
+		//database.removeAllAgentsByAgentskiCentar(ac);
+		//database.removeAgentskiCentar(ac);
+		
+		if (database.isMaster()){
+			
+			// salji /node/{alias} svim ostalim cvorovima osim aliasu
+		}
 	}
 	
 	/**
