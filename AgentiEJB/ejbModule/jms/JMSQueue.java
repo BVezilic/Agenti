@@ -94,7 +94,7 @@ public class JMSQueue implements MessageListener {
 
 			producer.close();
 			consumer.close();
-			connection.close();
+			connection.stop();
 		    
 		} catch (Exception ex) {
 			ex.printStackTrace();
