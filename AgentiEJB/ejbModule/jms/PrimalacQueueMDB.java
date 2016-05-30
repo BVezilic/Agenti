@@ -51,6 +51,7 @@ public class PrimalacQueueMDB implements MessageListener {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
 				long time = omsg.getLongProperty("sent");
 				// pronadji agenta za koga je poruka
+				System.out.println(aclMessage.getReceivers()[0]);
 				if (aclMessage.getReceivers()[0] == null) {
 					System.out.println("NEMAM KOME DA POSALJEM");
 					return;
@@ -59,6 +60,7 @@ public class PrimalacQueueMDB implements MessageListener {
 				if (agent == null) {
 					System.out.println("NE POSTOJI AGENT");
 				} else {
+					System.out.println("POSTOJI");
 					// reci agentu da obradi poruku
 					agent.handleMessage(aclMessage);
 				}

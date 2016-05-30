@@ -34,7 +34,10 @@ public class Ping extends Agent {
 
 	@Override
 	public void handleMessage(ACLMessage poruka) {
+		System.out.println("PING HANDLE");
+		System.out.println(poruka.getPerformative());
 		if(poruka.getPerformative().equals(Performative.REQUEST)) {
+			System.out.println("REQUEST");
 			//formiraj poruku za ponga
 			ACLMessage aclMessage = new ACLMessage();
 			aclMessage.setSender(this.getAid());

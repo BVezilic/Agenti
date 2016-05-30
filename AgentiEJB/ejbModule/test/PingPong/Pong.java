@@ -29,7 +29,9 @@ public class Pong extends Agent {
 
 	@Override
 	public void handleMessage(ACLMessage poruka) {
+		System.out.println("PONG HANDLE");
 		if(poruka.getPerformative().equals(Performative.REQUEST)) {
+			System.out.println("PONG REQUEST");
 			//formiraj poruku za pinga
 			ACLMessage aclMessage = new ACLMessage();
 			aclMessage.setSender(this.getAid());
@@ -37,7 +39,7 @@ public class Pong extends Agent {
 			aclMessage.setConversationID(poruka.getConversationID());
 			aclMessage.setPerformative(Performative.INFORM);
 			// posalji poruku
-			sendToPing(poruka.getReceivers()[0].getHost().getAddress(), aclMessage);
+			sendToPing(poruka.getSender().getHost().getAddress(), aclMessage);
 		}
 		System.out.println("PONG - STIGLA PORUKA");
 	}

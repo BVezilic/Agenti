@@ -65,6 +65,7 @@ public class JMSQueue implements MessageListener {
 
 	public JMSQueue(ACLMessage aclMessage) {
 		try {
+			System.out.println("JMSQUEUE");
 			Context context = new InitialContext();
 			
 			ConnectionFactory cf = (ConnectionFactory) context.lookup("java:jboss/exported/jms/RemoteConnectionFactory");
@@ -94,7 +95,8 @@ public class JMSQueue implements MessageListener {
 
 			producer.close();
 			consumer.close();
-			connection.stop();
+			session.close();
+			connection.close();
 		    
 		} catch (Exception ex) {
 			ex.printStackTrace();
