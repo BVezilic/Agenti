@@ -1,5 +1,7 @@
 package jms;
 
+import java.util.logging.Logger;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -7,9 +9,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import database.Database;
 import model.ACLMessage;
@@ -41,6 +40,8 @@ import model.AgentInterface;
 
 public class PrimalacQueueMDB implements MessageListener {
 	
+	Logger log = Logger.getLogger("Primalac MDB");
+	
 	@EJB
 	Database database;
 	
@@ -51,23 +52,22 @@ public class PrimalacQueueMDB implements MessageListener {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
 				long time = omsg.getLongProperty("sent");
 				// pronadji agenta za koga je poruka
-				System.out.println(aclMessage.getReceivers()[0]);
+				log.info("Poruka za: " +  aclMessage.getReceivers()[0]);
 				if (aclMessage.getReceivers()[0] == null) {
-					System.out.println("NEMAM KOME DA POSALJEM");
+					log.info("Nemam kome da posaljem");
 					return;
 				}
 				AgentInterface agent = findAgent(aclMessage.getReceivers()[0]);
+				//ispisi poruku koja je stigla u que
+				database.getMessages().add(aclMessage);
 				if (agent == null) {
-					System.out.println("NE POSTOJI AGENT");
+					log.info("Ne postoji trazeni agent");
 				} else {
-					System.out.println("POSTOJI");
+					log.info("Nasao sam trazenog agenta " + agent.getAid().getName());
 					// reci agentu da obradi poruku
 					agent.handleMessage(aclMessage);
 				}
-				//ispisi poruku koja je stigla u que
-				//database.sendMessage(formConsoleMessage(aclMessage));
-				database.getMessages().add(aclMessage);
-				System.out.println("Received new message from Queue : " + aclMessage.getConversationID() + ", with timestamp: " + time);
+				System.out.println("Received new message from Queue : " + aclMessage.toString() + ", with timestamp: " + time);
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
@@ -77,15 +77,8 @@ public class PrimalacQueueMDB implements MessageListener {
 	}
 	
 	private AgentInterface findAgent(AID reciever) {
+		log.info("Trazim agenta na osnovu njegovo AID-a: " + reciever.toString());
 		return database.getActiveAgentByAID(reciever);
-	}
-	
-	private String formConsoleMessage(ACLMessage aclMessage) throws JSONException {
-		JSONObject jsonObj = new JSONObject();
-		String msg = "Message from: " + aclMessage.getSender().getName() + " to " + aclMessage.getReceivers()[0].getName();
-		jsonObj.put("data", msg);
-		jsonObj.put("type", "consoleLog");
-		return jsonObj.toString();
 	}
 
 }

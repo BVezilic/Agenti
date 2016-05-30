@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.websocket.Session;
@@ -15,6 +19,7 @@ import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
 
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Startup
 @Singleton
 public class Database {
@@ -28,7 +33,7 @@ public class Database {
 	private ArrayList<Session> sessions = new ArrayList<Session>();
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
-	private String masterIP = "192.168.0.10";
+	private String masterIP = "192.168.1.6";
 	private AgentskiCentar agentskiCentar;
 	
 	public Boolean isMaster(){
@@ -39,6 +44,7 @@ public class Database {
 		}
 	}
 	
+	@Lock(LockType.WRITE)
 	public Boolean addActiveAgent(AgentInterface agent){
 		
 		System.out.println(agent);
@@ -122,11 +128,12 @@ public class Database {
 		return null;
 	}
 	
+	@Lock(LockType.WRITE)
 	public AgentInterface getActiveAgentByAID(AID aid){
 		for (AgentInterface agent : activeAgents) {
 			AID temp = agent.getAid();
-			System.out.println(temp.getName() + " " + aid.getName());
-			System.out.println(temp.getHost());
+			//System.out.println(temp.getName() + " " + aid.getName());
+			//System.out.println(temp.getHost().getAlias() + " " + aid.getHost().getAlias());
 			if (temp.getName().equals(aid.getName()) && temp.getHost().getAlias().equals(aid.getHost().getAlias())){
 				return agent;
 			}
