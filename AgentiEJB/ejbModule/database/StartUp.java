@@ -129,9 +129,10 @@ public class StartUp {
 	
 	public boolean checkBeat(AgentskiCentar ac){
 		
+		System.out.println("TEST");
 		try {
 			ResteasyClient client = new ResteasyClientBuilder().build();
-			ResteasyWebTarget target = client.target("http://" + database.getMasterIP() + ":8080/AgentiWeb/rest/agentskiCentar/node/");
+			ResteasyWebTarget target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node/");
 			target.request(MediaType.TEXT_PLAIN).get();
 			return true;
 		} catch (Exception e){
