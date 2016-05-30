@@ -131,6 +131,18 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 			agent.init(new AID(name, database.getAgentskiCentar(), new AgentType(type,null)));
 			database.addActiveAgent(agent);	
 			context.close();
+			
+			// salji dodatog svim cvorovima
+			for (AgentskiCentar ac : database.getAgentskiCentri()) {
+				ResteasyClient client = new ResteasyClientBuilder().build();
+				if (!ac.getAddress().equals(database.getAgentskiCentar().getAddress())){
+					ResteasyWebTarget target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running");
+					ArrayList<AgentInterface> ai = new ArrayList<AgentInterface>();
+					ai.add(agent);
+					target.request().post(Entity.entity(ai, MediaType.APPLICATION_JSON));
+				}
+			}
+			
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
