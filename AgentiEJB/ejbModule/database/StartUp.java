@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
+import javax.ejb.Schedules;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ws.rs.client.Entity;
@@ -101,5 +103,40 @@ public class StartUp {
 		ResteasyWebTarget target = client.target("http://" + database.getMasterIP() + ":8080/AgentiWeb/rest/agentskiCentar/node/" + database.getAgentskiCentar().getAlias());
 		/*Response response =*/ target.request().delete();
 			
+	}
+	
+	@Schedules({
+		@Schedule(hour = "*", minute = "*", second = "*/10", info = "every tenth"),
+		})
+	public void timer(){
+		AgentskiCentar agentskiCentar = database.getAgentskiCentar();
+		for (AgentskiCentar ac : database.getAgentskiCentri()){
+			if (!ac.getAlias().equals(agentskiCentar.getAddress())){
+				
+				boolean flag = checkBeat(ac);
+				// prvi pokusaj
+				if (flag == false){
+					// drugi pokusaj
+					flag = checkBeat(ac);
+					if (flag == false){
+						// javi da se brise cvor iz liste (delete rest ka svima)
+					}
+				}
+				System.out.println("Agentski centar " + ac.getAlias() + " is alive");
+			}
+		}
+	} 
+	
+	public boolean checkBeat(AgentskiCentar ac){
+		
+		try {
+			ResteasyClient client = new ResteasyClientBuilder().build();
+			ResteasyWebTarget target = client.target("http://" + database.getMasterIP() + ":8080/AgentiWeb/rest/agentskiCentar/node/");
+			target.request(MediaType.TEXT_PLAIN).get();
+			return true;
+		} catch (Exception e){
+			return false;
+		}
+		
 	}
 }

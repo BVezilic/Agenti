@@ -314,6 +314,6 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/node")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Boolean heartBeat(){ 
-		return null;
+		return true;
 	}
 }
