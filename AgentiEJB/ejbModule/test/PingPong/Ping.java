@@ -52,12 +52,12 @@ public class Ping extends Agent {
 			sendToPong(poruka.getContent(), aclMessage);
 			log.info("Zavrsio sam slanje ka Pongu");
 		} else if (poruka.getPerformative().equals(Performative.INFORM)){
-			
+			log.info("Stigao mi je odgovor od Pong-a. Kraj razgovora.");
 		}
 	}
 	
 	private void sendToPong(String address, ACLMessage aclMessage) {
-		if(database.isMaster()) {
+		if(this.getAid().getHost().getAddress().equals(aclMessage.getReceivers()[0].getHost().getAddress())) {
 			log.info("Saljem poruku za Ponga preko queue: " + aclMessage.toString() );
 			new JMSQueue(aclMessage);
 		} else {

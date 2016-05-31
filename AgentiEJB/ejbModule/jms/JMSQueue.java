@@ -1,5 +1,7 @@
 package jms;
 
+import java.util.logging.Logger;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageProducer;
@@ -18,9 +20,10 @@ import model.ACLMessage;
  */
 
 public class JMSQueue {
+	Logger log = Logger.getLogger("JSMQUEUE");
+	
 	public JMSQueue(ACLMessage aclMessage) {
 		try {
-			System.out.println("JMSQUEUE");
 			Context context = new InitialContext();
 			
 			ConnectionFactory cf = (ConnectionFactory) context.lookup("java:jboss/exported/jms/RemoteConnectionFactory");
@@ -42,9 +45,10 @@ public class JMSQueue {
 			MessageProducer producer = session.createProducer(queue);
 			//producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 			//Thread.sleep(1000);
+			log.info("Saljem poruku na queue: " + msg.getObject());
 			producer.send(msg);
 			
-			System.out.println("Message published. Please check application server's console to see the response from MDB.");
+			//System.out.println("Message published. Please check application server's console to see the response from MDB.");
 
 			producer.close();
 			session.close();

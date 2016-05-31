@@ -1,5 +1,7 @@
 package test.PingPong;
 
+import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.ejb.Remote;
 import javax.ejb.Stateful;
@@ -24,6 +26,8 @@ public class Pong extends Agent {
 
 	private static final long serialVersionUID = -9209081242711408357L;
 
+	Logger log = Logger.getLogger("PING AGENT");
+	
 	@EJB
 	Database database;
 	
@@ -35,25 +39,27 @@ public class Pong extends Agent {
 
 	@Override
 	public void handleMessage(ACLMessage poruka) {
-		System.out.println("PONG HANDLE");
 		if(poruka.getPerformative().equals(Performative.REQUEST)) {
-			System.out.println("PONG REQUEST");
+			log.info("Formiram poruku za Ping-a");
 			//formiraj poruku za pinga
 			ACLMessage aclMessage = new ACLMessage();
 			aclMessage.setSender(this.getAid());
 			aclMessage.setReceivers(new AID[]{poruka.getSender()});
 			aclMessage.setConversationID(poruka.getConversationID());
 			aclMessage.setPerformative(Performative.INFORM);
+			log.info("Formirana poruka za pinga, pokusavam da je posaljem: " + aclMessage);
 			// posalji poruku
 			sendToPing(poruka.getSender().getHost().getAddress(), aclMessage);
+			log.info("Zavrseno slanje poruke ka Pingu");
 		}
-		System.out.println("PONG - STIGLA PORUKA");
 	}
 	
 	private void sendToPing(String address, ACLMessage aclMessage) {
-		if (database.isMaster()) {
+		if (this.getAid().getHost().getAddress().equals(aclMessage.getReceivers()[0].getHost().getAddress())) {
+			log.info("Saljem poruku na JMSQueue zato sto su na istom cvoru " + aclMessage.getReceivers()[0].getHost().getAddress());
 			new JMSQueue(aclMessage);
 		} else {
+			log.info("Saljem poruke preko REST zahteva: " + aclMessage.toString());
 			ResteasyClient client = new ResteasyClientBuilder().build();
 			System.out.println("http://" + address + ":8080/AgentiWeb/rest/agentskiCentar/messages");
 			ResteasyWebTarget target = client.target("http://" + address + ":8080/AgentiWeb/rest/agentskiCentar/messages");

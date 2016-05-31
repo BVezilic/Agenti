@@ -3,6 +3,7 @@ package database;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.Lock;
@@ -24,6 +25,8 @@ import model.AgentskiCentar;
 @Singleton
 public class Database {
 
+	Logger log = Logger.getLogger("DATABASE");
+	
 	private ArrayList<AgentInterface> activeAgents = new ArrayList<AgentInterface>();
 	private ArrayList<AgentskiCentar> agentskiCentri = new ArrayList<AgentskiCentar>();
 	
@@ -119,6 +122,7 @@ public class Database {
 		}
 	}
 	
+	@Lock(LockType.READ)
 	public AgentInterface getActiveAgentByName(String name){
 		for (AgentInterface agent : activeAgents) {
 			if (agent.getAid().getName().equals(name)){
@@ -128,8 +132,9 @@ public class Database {
 		return null;
 	}
 	
-	@Lock(LockType.WRITE)
+	@Lock(LockType.READ)
 	public AgentInterface getActiveAgentByAID(AID aid){
+		log.info("Trazim agenta po AID-u: " + aid.getName());
 		for (AgentInterface agent : activeAgents) {
 			AID temp = agent.getAid();
 			//System.out.println(temp.getName() + " " + aid.getName());

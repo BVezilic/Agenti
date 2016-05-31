@@ -50,9 +50,9 @@ public class PrimalacQueueMDB implements MessageListener {
 			ObjectMessage omsg = (ObjectMessage) msg;
 			try {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
-				long time = omsg.getLongProperty("sent");
+				//long time = omsg.getLongProperty("sent");
 				// pronadji agenta za koga je poruka
-				log.info("Poruka za: " +  aclMessage.getReceivers()[0]);
+				log.info("Primio sam novu poruku za: " +  aclMessage.getReceivers()[0].getName());
 				if (aclMessage.getReceivers()[0] == null) {
 					log.info("Nemam kome da posaljem");
 					return;
@@ -67,7 +67,7 @@ public class PrimalacQueueMDB implements MessageListener {
 					// reci agentu da obradi poruku
 					agent.handleMessage(aclMessage);
 				}
-				System.out.println("Received new message from Queue : " + aclMessage.toString() + ", with timestamp: " + time);
+				//System.out.println("Received new message from Queue : " + aclMessage.toString() + ", with timestamp: " + time);
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
@@ -77,7 +77,7 @@ public class PrimalacQueueMDB implements MessageListener {
 	}
 	
 	private AgentInterface findAgent(AID reciever) {
-		log.info("Trazim agenta na osnovu njegovo AID-a: " + reciever.toString());
+		log.info("Trazim agenta na osnovu njegovo AID-a: " + reciever.getName());
 		return database.getActiveAgentByAID(reciever);
 	}
 
