@@ -226,7 +226,7 @@ public class Database {
 	public boolean removeActiveAgent(AgentInterface agent){
 		for (AgentInterface a : activeAgents.values()){
 			if (a.getAid().getName().equals(agent.getAid().getName())){
-				activeAgents.remove(a);
+				activeAgents.remove(a.getAid());
 				return true;
 			}
 		}
