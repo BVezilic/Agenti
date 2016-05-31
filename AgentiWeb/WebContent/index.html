@@ -51,7 +51,7 @@
 	  <div class="row content">
 	    <div class="col-sm-4 sidenav">
 	    	<div class="panel panel-default">
-		    	<div class="panel-heading">Podrzani agenti</div>
+		    	<div class="panel-heading"><b>Podrzani agenti</b></div>
 	  			<div class="panel-body">
 	  				<table class="table table-striped fixed">	  					
 	  					<tr ng-repeat="agentType in supportedAgents">
@@ -65,7 +65,7 @@
 		    	</div>		
 	    	</div>
 	    	<div class="panel panel-default">
-	    		<div class="panel-heading">Aktivni agenti</div>
+	    		<div class="panel-heading"><b>Aktivni agenti</b></div>
 	  			<div class="panel-body">
 	  				<table class="table table-striped fixed">
 	  					<tr ng-repeat="aid in activeAgents">
@@ -79,7 +79,7 @@
 	    </div>
 	    <div class="col-sm-4 text-left"> 
 	      <div class="panel panel-default" style="margin-top:20px">
-		     <div class="panel-heading">Poruka</div>
+		     <div class="panel-heading"><b>ACL Poruka</b></div>
 			 <div class="panel-body">
 			  	<div class="form-group">
 		    	  <label for="perform">Performative:</label>
@@ -137,9 +137,12 @@
 	      </div>
 	    </div>
 	    <div class="col-sm-4 sidenav">
-	      <div class="well">
-	        <p ng-model="consoleLog">{{consoleLog}}</p>
-	        <button class="btn btn-primary" ng-click="clearConsole()">Clear console</button>
+	      <div class="panel panel-default">
+	      	<div class="panel-heading"><b>Poruke</b></div>
+			<div class="panel-body" ng-repeat="msg in consoleLog">
+				<p>{{msg}}</p>
+		        <!-- <button class="btn btn-primary" ng-click="clearConsole()">Clear console</button> -->
+	        </div>
 	   	  </div>
 	      
 	      <div class="well">

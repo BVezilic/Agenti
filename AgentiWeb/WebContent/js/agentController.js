@@ -133,22 +133,29 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
 		}).then(function successCallback(response) {
 			var messages = response.data;
-			var retVal = '';
-			var sender;
-			var receivers;
+			var retVal = [];
 			
-			for (var i=0; i<messages.length; i++) {				
-				if (messages[i].sender == null)
-					sender = 'Klijent';
-				else 
-					sender = messages[i].sender.toString();
+			for (var i=0; i<messages.length; i++) {	
+				var sender = '';
+				var receivers = '';
 				
-				if (messages[i].receivers == null)
+				if (messages[i].sender == null) {
+					sender = 'Klijent';
+				}
+				else {
+					sender = messages[i].sender.type.name;
+				}
+				
+				if (messages[i].receivers == null) {
 					receivers = 'Niko';
-				else 
-					receivers = messages[i].receivers.toString();
+				}
+				else {
+					for (var j=0; j<messages[i].receivers.length; j++) {
+						receivers += messages[i].receivers[j].type.name + (j<messages[i].receivers.length-1?', ':'');
+					}
+				}
 							
-				retVal = 'Message performative: '+messages[i].performative+', from: '+sender+', to: '+receivers+'\n';
+				retVal.push('Message performative: '+messages[i].performative+', from: '+sender+', to: '+receivers+' content: '+messages[i].content);
 			}
 			console.log(retVal);
 			addMessage(retVal);
@@ -241,9 +248,6 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
     
     $interval(pollMessages, 5000);
     
-    $scope.clearMessage = new function() {
-		$scope.consoleLog = "";
-	}
     //setteri
 	var setPerformative = function(data){
 		$scope.performative = data;
