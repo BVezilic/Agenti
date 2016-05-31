@@ -155,7 +155,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 				stopAgentHelper(aid, hostName);
 			} else {
 				ResteasyClient client = new ResteasyClientBuilder().build();
-				ResteasyWebTarget target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running/remove/{" + aid +  "}/{" + hostName + "}");
+				ResteasyWebTarget target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running/remove/" + aid +  "/" + hostName);
 				target.request().delete();
 			}
 		}
@@ -332,9 +332,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 		
 		if (database.isMaster()){
 			for(AgentskiCentar agentskiCentar : database.getAgentskiCentri()){
-				ResteasyClient client = new ResteasyClientBuilder().build();
-				ResteasyWebTarget target = client.target("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node/{" + alias + "}");
-				target.request().delete();
+				if (!agentskiCentar.getAlias().equals(database.getAgentskiCentar().getAlias())){
+					ResteasyClient client = new ResteasyClientBuilder().build();
+					ResteasyWebTarget target = client.target("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node/" + alias);
+					target.request().delete();
+				}
 			}
 		}
 	}
