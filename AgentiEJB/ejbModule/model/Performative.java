@@ -11,4 +11,5 @@ public enum Performative {
 	FAILURE,
 	INFORM_DONE,
 	INFORM_RESULT,
+	TIME_UP,
 }

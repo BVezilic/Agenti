@@ -139,7 +139,7 @@
 	    <div class="col-sm-4 sidenav">
 	      <div class="panel panel-default">
 	      	<div class="panel-heading"><b>Poruke</b></div>
-			<div class="panel-body" ng-repeat="msg in consoleLog">
+			<div class="panel-body" ng-repeat="msg in consoleLog track by $index">
 				<p>{{msg}}</p>
 		        <!-- <button class="btn btn-primary" ng-click="clearConsole()">Clear console</button> -->
 	        </div>

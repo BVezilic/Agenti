@@ -47,6 +47,43 @@ public class JMSQueue {
 			//Thread.sleep(1000);
 			log.info("Saljem poruku na queue: " + msg.getObject());
 			producer.send(msg);
+			//System.out.println("Message published. Please check application server's console to see the response from MDB.");
+
+			producer.close();
+			session.close();
+			connection.close();
+		    
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	public JMSQueue(ACLMessage aclMessage, long delay) {
+		try {
+			Context context = new InitialContext();
+			
+			ConnectionFactory cf = (ConnectionFactory) context.lookup("java:jboss/exported/jms/RemoteConnectionFactory");
+		    final Queue queue = (Queue) context.lookup("java:jboss/exported/jms/queue/mojQueue");
+		    context.close();
+				   
+			Connection connection = cf.createConnection("guest", "guestguest");
+			final Session session = connection.createSession(false,
+					Session.AUTO_ACKNOWLEDGE);
+			
+			connection.start();
+
+		    ObjectMessage msg = session.createObjectMessage(aclMessage);
+		    // The sent timestamp acts as the message's ID
+		    long sent = System.currentTimeMillis();
+		    msg.setLongProperty("sent", sent);
+		    //msg.setStringProperty("type", type);
+		    
+			MessageProducer producer = session.createProducer(queue);
+			//producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+			//Thread.sleep(1000);
+			log.info("Saljem poruku na queue: " + msg.getObject());
+			producer.setDeliveryDelay(delay);
+			producer.send(msg);
 			
 			//System.out.println("Message published. Please check application server's console to see the response from MDB.");
 
