@@ -71,7 +71,11 @@ public class StartUp {
 			
 			if (!doHandshake()){
 				rollback(agentskiCentar);
+				if (!doHandshake()){
+					rollback(agentskiCentar);
+				}
 			}
+			
 			System.out.println("Startup -- Slave");
 
 		}

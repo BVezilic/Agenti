@@ -19,6 +19,7 @@ import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
+import sun.management.resources.agent;
 
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Startup
@@ -157,6 +158,16 @@ public class Database {
 			}
 		}
 		return null;
+	}
+	
+	public List<AgentInterface> getAgentsByTypeName(String typeName){
+		ArrayList<AgentInterface> retVal = new ArrayList<AgentInterface>();
+		for (AgentInterface agentInterface : activeAgents) {
+			if (agentInterface.getAid().getType().getName().equals(typeName)){
+				retVal.add(agentInterface);
+			}
+		}
+		return retVal;
 	}
 	
 	@Lock(LockType.READ)
