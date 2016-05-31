@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
-import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.websocket.Session;
@@ -19,7 +19,6 @@ import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
-import sun.management.resources.agent;
 
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Startup
@@ -37,7 +36,7 @@ public class Database {
 	private ArrayList<Session> sessions = new ArrayList<Session>();
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
-	private String masterIP = "192.168.0.15";
+	private String masterIP = "192.168.0.10";
 
 	private AgentskiCentar agentskiCentar;
 	
