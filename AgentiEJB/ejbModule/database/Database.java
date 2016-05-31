@@ -2,6 +2,7 @@ package database;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,7 +28,8 @@ public class Database {
 
 	Logger log = Logger.getLogger("DATABASE");
 	
-	private ArrayList<AgentInterface> activeAgents = new ArrayList<AgentInterface>();
+	//private ArrayList<AgentInterface> activeAgents = new ArrayList<AgentInterface>();
+	private HashMap<AID,AgentInterface> activeAgents = new HashMap<AID,AgentInterface>();
 	private ArrayList<AgentskiCentar> agentskiCentri = new ArrayList<AgentskiCentar>();
 	
 	private ArrayList<AgentType> podrzaniTipoviAgenata = new ArrayList<AgentType>();
@@ -52,8 +54,16 @@ public class Database {
 	public Boolean addActiveAgent(AgentInterface agent){
 		
 		System.out.println(agent);
+		AID aid = agent.getAid();
+		for(AID a : activeAgents.keySet()){
+			if (aid.getName().equals(a.getName())){
+				return false;
+			}
+		}
 		
+		activeAgents.put(aid,agent);
 		
+		/*
 		for (AgentInterface a : activeAgents) {
 			if (a.getAid().getName().equals(agent.getAid().getName())){
 				System.out.println("Database addActiveAgent -- Postoji agent sa istim id, name:" + a.getAid().getName());
@@ -65,6 +75,7 @@ public class Database {
 		System.out.println("Dodat novi aktivni agent name:" + agent.getAid().getName());
 		
 		activeAgents.add(agent);
+		*/
 		return true;
 	}
 	
@@ -99,16 +110,24 @@ public class Database {
 	
 	public void removeAllAgentsByAgentskiCentar(AgentskiCentar agentskiCentar){
 		String centarAlias = agentskiCentar.getAlias();
-		ArrayList<AgentInterface> zaBrisanje = new ArrayList<AgentInterface>();
+		ArrayList<AID> zaBrisanje = new ArrayList<AID>();
 		
+		for (AID a : activeAgents.keySet()) {
+			if (a.getHost().getAlias().equals(centarAlias)){
+				zaBrisanje.add(a);
+			}
+		}
+		/*
 		for (AgentInterface agentInterface : activeAgents) {
 			if(agentInterface.getAid().getHost().getAlias().equals(centarAlias)){
 				System.out.println("Brisem agenta " + agentInterface.getAid().getName());
 				zaBrisanje.add(agentInterface);
 			}
 		}
-		
-		activeAgents.removeAll(zaBrisanje);
+		*/
+		for (AID a : zaBrisanje) {
+			activeAgents.remove(a);
+		}
 		
 	}
 	
@@ -151,28 +170,39 @@ public class Database {
 	
 	@Lock(LockType.READ)
 	public AgentInterface getActiveAgentByName(String name){
+		
+		for (AID aid : activeAgents.keySet()){
+			if (aid.getName().equals(name)){
+				return activeAgents.get(aid);
+			}
+		}
+		/*
 		for (AgentInterface agent : activeAgents) {
 			if (agent.getAid().getName().equals(name)){
 				return agent;
 			}
 		}
+		*/
 		return null;
 	}
 	
 	public List<AgentInterface> getAgentsByTypeName(String typeName){
-		ArrayList<AgentInterface> retVal = new ArrayList<AgentInterface>();
-		for (AgentInterface agentInterface : activeAgents) {
+		ArrayList<AgentInterface> retVal = new ArrayList<AgentInterface>();	
+		
+		for (AgentInterface agentInterface : activeAgents.values()) {
 			if (agentInterface.getAid().getType().getName().equals(typeName)){
 				retVal.add(agentInterface);
 			}
 		}
+		
 		return retVal;
 	}
 	
 	@Lock(LockType.READ)
 	public AgentInterface getActiveAgentByAID(AID aid){
 		log.info("Trazim agenta po AID-u: " + aid.getName());
-		for (AgentInterface agent : activeAgents) {
+		/*
+		for (AID a : activeAgents) {
 			AID temp = agent.getAid();
 			//System.out.println(temp.getName() + " " + aid.getName());
 			//System.out.println(temp.getHost().getAlias() + " " + aid.getHost().getAlias());
@@ -180,7 +210,8 @@ public class Database {
 				return agent;
 			}
 		}
-		return null;
+		*/
+		return activeAgents.get(aid);
 	}
 	
 	public AgentskiCentar getAgentskiCentarByName(String name){
@@ -193,18 +224,22 @@ public class Database {
 	}
 	
 	public boolean removeActiveAgent(AgentInterface agent){
-		for (AgentInterface a : activeAgents){
+		for (AgentInterface a : activeAgents.values()){
 			if (a.equals(agent)){
 				activeAgents.remove(a);
 				return true;
 			}
 		}
-		
 		return false;
 	}
 
 	public ArrayList<AgentInterface> getActiveAgents() {
-		return activeAgents;
+		ArrayList<AgentInterface> ai = new ArrayList<AgentInterface>();
+		
+		for (AgentInterface agentInterface : activeAgents.values()) {
+			ai.add(agentInterface);
+		}
+		return ai;
 	}
 	public ArrayList<AgentInterface> getAgentInterfaceFromClasses(ArrayList<Agent> agents){
 		ArrayList<AgentInterface> retVal = new ArrayList<AgentInterface>();
@@ -216,13 +251,16 @@ public class Database {
 	
 	public ArrayList<Agent> getActiveAgentsClasses(){
 		ArrayList<Agent> retVal = new ArrayList<Agent>();
-		for (AgentInterface agentInterface : activeAgents) {
-			retVal.add(new Agent(agentInterface.getAid()));
+		
+		
+		for (AID aid : activeAgents.keySet()) {
+			retVal.add(new Agent(aid));
 		}
+		
 		return retVal;
 	}
 
-	public void setActiveAgents(ArrayList<AgentInterface> activeAgents) {
+	public void setActiveAgents(HashMap<AID,AgentInterface> activeAgents) {
 		this.activeAgents = activeAgents;
 	}
 
