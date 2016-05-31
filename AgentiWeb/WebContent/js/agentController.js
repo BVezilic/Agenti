@@ -248,6 +248,8 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
     
     $interval(pollMessages, 5000);
     
+    $interval(getActive(), 2000)
+    
     //setteri
 	var setPerformative = function(data){
 		$scope.performative = data;
