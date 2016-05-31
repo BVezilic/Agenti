@@ -9,6 +9,12 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 
 import database.Database;
 import model.ACLMessage;
@@ -50,24 +56,50 @@ public class PrimalacQueueMDB implements MessageListener {
 			ObjectMessage omsg = (ObjectMessage) msg;
 			try {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
-				//long time = omsg.getLongProperty("sent");
-				// pronadji agenta za koga je poruka
-				log.info("Primio sam novu poruku za: " +  aclMessage.getReceivers()[0].getName());
-				if (aclMessage.getReceivers()[0] == null) {
+				log.info("Primio sam novu poruku: " +  aclMessage);
+				
+				// zabelezi novu poruku u bazu
+				database.getMessages().add(aclMessage);
+				
+				// proveri da li postoji receiveri
+				if (aclMessage.getReceivers().length == 0) {
 					log.info("Nemam kome da posaljem");
 					return;
 				}
-				AgentInterface agent = findAgent(aclMessage.getReceivers()[0]);
-				//ispisi poruku koja je stigla u que
-				database.getMessages().add(aclMessage);
-				if (agent == null) {
-					log.info("Ne postoji trazeni agent");
-				} else {
-					log.info("Nasao sam trazenog agenta " + agent.getAid().getName());
-					// reci agentu da obradi poruku
-					agent.handleMessage(aclMessage);
+				
+				// pronadji agente za koga je poruka
+				for (int i = 0; i < aclMessage.getReceivers().length; i++) {
+					log.info("Proveri da li je receiver na istom agenstkom centru");
+					if (database.getAgentskiCentar().getAddress().equals(aclMessage.getReceivers()[i].getHost().getAddress())) {
+						log.info("Trazim agenta na osnovu njegovo AID-a: " + aclMessage.getReceivers()[i].getName());
+						AgentInterface agent =  database.getActiveAgentByAID(aclMessage.getReceivers()[i]);	
+						if (agent == null) {
+							log.info("Ne postoji trazeni agent");
+						} else {
+							log.info("Nasao sam trazenog agenta " + agent.getAid().getName());
+							agent.handleMessage(aclMessage);
+						}
+					} else {
+						log.info("Formiraj novu poruku kako bih kontaktirao agentski centar na kome se nalazi taj agenat");
+						ACLMessage aclMsg = new ACLMessage();
+						aclMsg.setSender(aclMessage.getSender());
+						aclMsg.setReceivers(new AID[]{aclMessage.getReceivers()[i]});
+						aclMsg.setContent(aclMessage.getContent());
+						aclMsg.setContentObj(aclMessage.getContentObj());
+						aclMsg.setConversationID(aclMessage.getConversationID());
+						aclMsg.setPerformative(aclMessage.getPerformative());
+						aclMsg.setProtocol(aclMessage.getProtocol());
+						aclMsg.setEncoding(aclMessage.getEncoding());
+						aclMsg.setReplyTo(aclMessage.getReplyTo());
+						aclMsg.setUserArgs(aclMessage.getUserArgs());
+						log.info("Posalji novi poruku na receiverovo agentski centar da obradi");
+						ResteasyClient client = new ResteasyClientBuilder().build();
+						System.out.println("http://" + aclMessage.getReceivers()[i].getHost().getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
+						ResteasyWebTarget target = client.target("http://" + aclMessage.getReceivers()[i].getHost().getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
+						target.request(MediaType.APPLICATION_JSON).post(Entity.entity(aclMsg, MediaType.APPLICATION_JSON));
+						log.info("Kraj rest poziva");
+					}
 				}
-				//System.out.println("Received new message from Queue : " + aclMessage.toString() + ", with timestamp: " + time);
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
@@ -75,10 +107,4 @@ public class PrimalacQueueMDB implements MessageListener {
 	    	e.printStackTrace ();
 	    }
 	}
-	
-	private AgentInterface findAgent(AID reciever) {
-		log.info("Trazim agenta na osnovu njegovo AID-a: " + reciever.getName());
-		return database.getActiveAgentByAID(reciever);
-	}
-
 }

@@ -19,7 +19,6 @@ import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
-import sun.management.resources.agent;
 
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Startup
