@@ -125,25 +125,31 @@ public class StartUp {
 	}
 	
 	@Schedules({
-		@Schedule(hour = "*", minute = "*", second = "*/30", info = "every tenth"),
+		@Schedule(hour = "*", minute = "*", second = "*/10", info = "every tenth"),
 		})
 	public void timer(){
 		
-		AgentskiCentar agentskiCentar = database.getAgentskiCentar();
-		for (AgentskiCentar ac : database.getAgentskiCentri()){
-			if (!ac.getAddress().equals(agentskiCentar.getAddress())){
-				
-				boolean flag = checkBeat(ac);
-				// prvi pokusaj
-				if (flag == false){
-					// drugi pokusaj
-					flag = checkBeat(ac);
+		try{
+			AgentskiCentar agentskiCentar = database.getAgentskiCentar();
+			for (AgentskiCentar ac : database.getAgentskiCentri()){
+				if (!ac.getAddress().equals(agentskiCentar.getAddress())){
+					
+					boolean flag = checkBeat(ac);
+					// prvi pokusaj
 					if (flag == false){
-						rollback(ac);
+						// drugi pokusaj
+						flag = checkBeat(ac);
+						if (flag == false){
+							rollback(ac);
+						}
 					}
+					System.out.println("Agentski centar " + ac.getAlias() + " is alive");
 				}
-				System.out.println("Agentski centar " + ac.getAlias() + " is alive");
+				
 			}
+		} catch (Exception e){
+			
+			e.printStackTrace();
 			
 		}
 		
@@ -157,6 +163,7 @@ public class StartUp {
 			target.request(MediaType.TEXT_PLAIN).get();
 			return true;
 		} catch (Exception e){
+			System.out.println("UHVATION SAM EXCEPTION");
 			return false;
 		}
 		
