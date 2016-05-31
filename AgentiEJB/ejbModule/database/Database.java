@@ -36,7 +36,7 @@ public class Database {
 	private ArrayList<Session> sessions = new ArrayList<Session>();
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
-	private String masterIP = "192.168.1.6";
+	private String masterIP = "192.168.0.15";
 	private AgentskiCentar agentskiCentar;
 	
 	public Boolean isMaster(){
