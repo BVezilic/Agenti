@@ -81,15 +81,10 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	}
 	
 	@GET
-	@Path("/proba")
-	public String proba(){
-		ArrayList<Agent> agents = database.getActiveAgentsClasses();
-		System.out.println(agents);
-
-		ResteasyClient client = new ResteasyClientBuilder().build();
-		ResteasyWebTarget target = client.target("http://" + database.getMasterIP() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running");
-		target.request().post(Entity.entity(agents, MediaType.APPLICATION_JSON));
+	@Path("/proba/{alias}")
+	public String proba(@PathParam("alias") String alias){
 		
+		rollback(alias);
 		return "done";
 	}
 // KLIJENT - AGENTSKI CENTAR
@@ -155,11 +150,26 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	@Path("/agents/running/{aid}/{hostName}")
 	public void stopAgentByAID(@PathParam("aid") String aid, @PathParam("hostName") String hostName){
 		
+		for (AgentskiCentar ac : database.getAgentskiCentri()) {
+			if (ac.getAddress().equals(database.getAgentskiCentar().getAddress())){
+				stopAgentHelper(aid, hostName);
+			} else {
+				ResteasyClient client = new ResteasyClientBuilder().build();
+				ResteasyWebTarget target = client.target("http://" + ac.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/agents/running/remove/{" + aid +  "}/{" + hostName + "}");
+				target.request().delete();
+			}
+		}
+		
+	}
+	
+	@DELETE
+	@Path("/agents/running/remove/{aid}/{hostName}")
+	public void stopAgentHelper(@PathParam("aid") String aid, @PathParam("hostName") String hostName){
+		
 		AID agentAID = new AID(aid, database.getAgentskiCentarByName(hostName) , null);
 		AgentInterface agent = database.getActiveAgentByAID(agentAID);
 		database.removeActiveAgent(agent);
 		agent.stop();
-		
 	}
 	
 	/**
@@ -317,12 +327,15 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	public void rollback(@PathParam("alias") String alias){ 
 		
 		AgentskiCentar ac = database.getAgentskiCentarByName(alias);
-		//database.removeAllAgentsByAgentskiCentar(ac);
-		//database.removeAgentskiCentar(ac);
+		database.removeAllAgentsByAgentskiCentar(ac);
+		database.removeAgentskiCentar(ac);
 		
 		if (database.isMaster()){
-			
-			// salji /node/{alias} svim ostalim cvorovima osim aliasu
+			for(AgentskiCentar agentskiCentar : database.getAgentskiCentri()){
+				ResteasyClient client = new ResteasyClientBuilder().build();
+				ResteasyWebTarget target = client.target("http://" + agentskiCentar.getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/node/{" + alias + "}");
+				target.request().delete();
+			}
 		}
 	}
 	

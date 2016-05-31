@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Schedules;
@@ -29,6 +30,7 @@ public class StartUp {
 	@EJB
 	Database database;
 	
+	String masterIP;
 
 	@PostConstruct
 	public void startUp(){
@@ -41,6 +43,8 @@ public class StartUp {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
+		
+		masterIP = database.getMasterIP();
 		
 		if (database.isMaster()){
 			
@@ -66,12 +70,27 @@ public class StartUp {
 			database.addSviTipoviAgenata(pong);
 			
 			if (!doHandshake()){
-				rollback();
+				rollback(agentskiCentar);
 			}
 			System.out.println("Startup -- Slave");
 
 		}
 		
+	}
+	
+	@PreDestroy
+	public void preDestroy(){
+		
+		AgentskiCentar agentskiCentar = new AgentskiCentar();
+		try {
+			agentskiCentar.setAddress(InetAddress.getLocalHost().getHostAddress());
+			agentskiCentar.setAlias(InetAddress.getLocalHost().getHostName());
+			//database.setAgentskiCentar(agentskiCentar);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+		rollback(agentskiCentar);
 	}
 	
 	public Boolean doHandshake(){
@@ -97,18 +116,19 @@ public class StartUp {
 		return true;
 	}
 	
-	public void rollback(){
+	public void rollback(AgentskiCentar ac){
 		
 		ResteasyClient client = new ResteasyClientBuilder().build();
-		ResteasyWebTarget target = client.target("http://" + database.getMasterIP() + ":8080/AgentiWeb/rest/agentskiCentar/node/" + database.getAgentskiCentar().getAlias());
+		ResteasyWebTarget target = client.target("http://" + masterIP +  ":8080/AgentiWeb/rest/agentskiCentar/node/" + ac.getAlias());
 		/*Response response =*/ target.request().delete();
 			
 	}
 	
 	@Schedules({
-		@Schedule(hour = "*", minute = "*", second = "*/10", info = "every tenth"),
+		@Schedule(hour = "*", minute = "*", second = "*/30", info = "every tenth"),
 		})
 	public void timer(){
+		
 		AgentskiCentar agentskiCentar = database.getAgentskiCentar();
 		for (AgentskiCentar ac : database.getAgentskiCentri()){
 			if (!ac.getAddress().equals(agentskiCentar.getAddress())){
@@ -119,12 +139,14 @@ public class StartUp {
 					// drugi pokusaj
 					flag = checkBeat(ac);
 					if (flag == false){
-						// javi da se brise cvor iz liste (delete rest ka svima)
+						rollback(ac);
 					}
 				}
 				System.out.println("Agentski centar " + ac.getAlias() + " is alive");
 			}
+			
 		}
+		
 	} 
 	
 	public boolean checkBeat(AgentskiCentar ac){
