@@ -19,6 +19,7 @@ import model.Agent;
 import model.AgentInterface;
 import model.AgentType;
 import model.AgentskiCentar;
+import sun.management.resources.agent;
 
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Startup
@@ -37,6 +38,7 @@ public class Database {
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
 	private String masterIP = "192.168.0.15";
+
 	private AgentskiCentar agentskiCentar;
 	
 	public Boolean isMaster(){
@@ -83,6 +85,32 @@ public class Database {
 		System.out.println("Dodat novi agentski centar: " + agentskiCentar.getAlias() + " " + agentskiCentar.getAddress());
 		agentskiCentri.add(agentskiCentar);
 		return true;
+	}
+	
+	public Boolean removeAgentskiCentar(AgentskiCentar agentskiCentar){
+		for (AgentskiCentar ac : agentskiCentri) {
+			if (ac.getAlias().equals(agentskiCentar.getAlias())){
+				agentskiCentri.remove(agentskiCentar);
+				System.out.println("Obrisan agentski centar sa imenom " + agentskiCentar.getAlias());
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void removeAllAgentsByAgentskiCentar(AgentskiCentar agentskiCentar){
+		String centarAlias = agentskiCentar.getAlias();
+		ArrayList<AgentInterface> zaBrisanje = new ArrayList<AgentInterface>();
+		
+		for (AgentInterface agentInterface : activeAgents) {
+			if(agentInterface.getAid().getHost().getAlias().equals(centarAlias)){
+				System.out.println("Brisem agenta " + agentInterface.getAid().getName());
+				zaBrisanje.add(agentInterface);
+			}
+		}
+		
+		activeAgents.removeAll(zaBrisanje);
+		
 	}
 	
 	public void addAllAgentskiCentri(List<AgentskiCentar> agentskiCentri){
