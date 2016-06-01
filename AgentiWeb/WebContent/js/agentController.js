@@ -256,18 +256,18 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 	}
     
     $scope.reset = function(){
-    	$scope.selectedPerform = null;
-    	$scope.selectedSender = null;
-    	$scope.selectedReceiver = null;
-    	$scope.selectedReplyTo = null;
-    	$scope.selectedContent = null;
-    	$scope.selectedLanguage = null;
-    	$scope.selectedEncoding = null;
-    	$scope.selectedOntology = null;
-    	$scope.selectedProtocol = null;
-    	$scope.selectedConversationId = null;
-    	$scope.selectedReplyWith = null;
-    	$scope.selectedReplyBy = null;
+    	$scope.selectedPerform = undefined;
+    	$scope.selectedSender = undefined;
+    	$scope.selectedReceiver = undefined;
+    	$scope.selectedReplyTo = undefined;
+    	$scope.selectedContent = undefined;
+    	$scope.selectedLanguage = undefined;
+    	$scope.selectedEncoding = undefined;
+    	$scope.selectedOntology = undefined;
+    	$scope.selectedProtocol = undefined;
+    	$scope.selectedConversationId = undefined;
+    	$scope.selectedReplyWith = undefined;
+    	$scope.selectedReplyBy = undefined;
     }
     
     //polling
