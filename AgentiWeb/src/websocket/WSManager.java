@@ -15,11 +15,13 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import database.Database;
+import model.ACLMessage;
 import model.AID;
 import model.AgentType;
 import model.Performative;
@@ -106,6 +108,11 @@ public class WSManager {
 								String aid = jsonMsg.getString("name");
 								String hostName = jsonMsg.getString("alias");
 								agentskiCentar.stopAgentByAID(aid, hostName);
+								break;
+							}
+							case "aclMessage": {
+								ACLMessage aclMessage = new ObjectMapper().readValue(jsonMsg.getString("data"), ACLMessage.class);
+								agentskiCentar.sendACLMessage(aclMessage);
 								break;
 							}
 						}

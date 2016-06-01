@@ -17,7 +17,7 @@
     }
     
     /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 1200px}
+    .row.content {height: 1100px}
     
     /* Set gray background color and 100% height */
     .sidenav {
@@ -52,7 +52,7 @@
 	    <div class="col-sm-4 sidenav">
 	    	<div class="panel panel-default">
 		    	<div class="panel-heading"><b>Podrzani agenti</b></div>
-	  			<div class="panel-body">
+	  			<div class="panel-body" style="max-height:338px;overflow-y:auto;">
 	  				<table class="table table-striped fixed">	  					
 	  					<tr ng-repeat="agentType in supportedAgents">
 	  						<form name="agents">
@@ -66,7 +66,7 @@
 	    	</div>
 	    	<div class="panel panel-default">
 	    		<div class="panel-heading"><b>Aktivni agenti</b></div>
-	  			<div class="panel-body">
+	  			<div class="panel-body" style="max-height:600px;overflow-y:auto;">
 	  				<table class="table table-striped fixed">
 	  					<tr ng-repeat="aid in activeAgents">
 							<td>{{ aid.type.name }}</td>
@@ -139,15 +139,11 @@
 	    <div class="col-sm-4 sidenav">
 	      <div class="panel panel-default">
 	      	<div class="panel-heading"><b>Poruke</b></div>
-			<div class="panel-body" ng-repeat="msg in consoleLog track by $index">
-				<p>{{msg}}</p>
+			<div class="panel-body" style="max-height:1001px;overflow-y:auto;">
+				<div ng-repeat="msg in consoleLog track by $index"><p>{{msg}}</p></div>
 		        <!-- <button class="btn btn-primary" ng-click="clearConsole()">Clear console</button> -->
 	        </div>
 	   	  </div>
-	      
-	      <div class="well">
-	        <p>Ako bude jos nesto trebalo da se doda, stavicemo ovde</p>
-	      </div>
 	    </div>
 	  </div>
 	</div>

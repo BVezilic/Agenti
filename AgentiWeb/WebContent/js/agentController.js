@@ -127,6 +127,14 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		$scope.socket.send(JSON.stringify(msg));
 	}
     
+	var sendACLMessage = funcion(aclMessage) {
+		var msg = {
+			type: 'aclMessage',
+			data: aclMessage
+		}
+		$scope.socket.send(JSON.stringify(msg));
+	}
+	
     var pollMessages = function() {
 		$http({
 		  method: 'GET',
@@ -157,7 +165,6 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 							
 				retVal.push('Message performative: '+messages[i].performative+', from: '+sender+', to: '+receivers+' content: '+messages[i].content);
 			}
-			console.log(retVal);
 			addMessage(retVal);
 		  }, function errorCallback(response) {
 		    alert('Nesto je poslo kako ne treba!');
@@ -232,20 +239,23 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 			replyWith: $scope.selectedReplyWith,
 			replayBy: $scope.selectedReplyBy
 		}
-		
 		// posalji poruku
-		$http({
-		  method: 'POST',
-		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
-		  data: ACLMessage
-		}).then(function successCallback(response) {
-			// uspesno poslao poruku
-		  }, function errorCallback(response) {
-		    alert('Nesto je poslo kako ne treba!');
-		  });
-		
+		if ($scope.podrzanWebSocket) {
+    		sendACLMessage(ACLMessage);	  		 
+    	} else {
+			$http({
+			  method: 'POST',
+			  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
+			  data: ACLMessage
+			}).then(function successCallback(response) {
+				// uspesno poslao poruku
+			  }, function errorCallback(response) {
+			    alert('Nesto je poslo kako ne treba!');
+			  });
+    	}
 	}
     
+    //polling
     $interval(pollMessages, 5000);
     
     $interval(getActive, 2000)
