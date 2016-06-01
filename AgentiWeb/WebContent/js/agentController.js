@@ -127,7 +127,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		$scope.socket.send(JSON.stringify(msg));
 	}
     
-	var sendACLMessage = funcion(aclMessage) {
+	var sendACLMessage = function(aclMessage) {
 		var msg = {
 			type: 'aclMessage',
 			data: aclMessage
@@ -255,10 +255,25 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
     	}
 	}
     
+    $scope.reset = function(){
+    	$scope.selectedPerform = null;
+    	$scope.selectedSender = null;
+    	$scope.selectedReceiver = null;
+    	$scope.selectedReplyTo = null;
+    	$scope.selectedContent = null;
+    	$scope.selectedLanguage = null;
+    	$scope.selectedEncoding = null;
+    	$scope.selectedOntology = null;
+    	$scope.selectedProtocol = null;
+    	$scope.selectedConversationId = null;
+    	$scope.selectedReplyWith = null;
+    	$scope.selectedReplyBy = null;
+    }
+    
     //polling
     $interval(pollMessages, 5000);
     
-    $interval(getActive, 2000)
+    $interval(getActive, 2000);
     
     //setteri
 	var setPerformative = function(data){
@@ -271,10 +286,12 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		$scope.supportedAgents = data;
 	}
 	var setReceivers = function(data) {
-		$scope.receivers = data;
+		if ($scope.selectedReceiver == undefined)
+			$scope.receivers = data;
 	}
 	var setSender = function(data) {
-		$scope.sender = data;
+		if ($scope.selectedSender == undefined)
+			$scope.sender = data;
 	}
 	var addMessage = function(data) {
 		$scope.consoleLog = data; 
