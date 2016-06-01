@@ -81,14 +81,17 @@
 	      <div class="panel panel-default" style="margin-top:20px">
 		     <div class="panel-heading"><b>ACL Poruka</b></div>
 			 <div class="panel-body">
+			 	<form>
 			  	<div class="form-group">
 		    	  <label for="perform">Performative:</label>
 		    	  <select class="form-control" ng-model="selectedPerform" ng-options="x for x in performative">
+		    	  	<option></option>
 				  </select>
 			    </div>
 			    <div class="form-group">
 			      <label for="sender">Sender:</label>
 			      <select class="form-control" ng-model="selectedSender" ng-options="x.name for x in sender">
+			      	<option></option>
 				  </select>
 			    </div>
 			    <div class="form-group">
@@ -133,6 +136,8 @@
 			      <input type="text" class="form-control" ng-model="selectedReplyBy" id="replyBy">
 			    </div>
 			    <button class="btn btn-primary" id="submit" ng-click="sendMessage()">Posalji poruku</button>
+			    <button class="btn btn-default" id="reset" ng-click="reset()">Reset</button>
+			    </form>
 	    	</div>
 	      </div>
 	    </div>
