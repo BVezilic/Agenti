@@ -20,7 +20,7 @@ import model.Performative;
 @Remote(AgentInterface.class)
 public class Participant extends Agent {
 
-Logger log = Logger.getLogger("INITIATOR AGENT");
+Logger log = Logger.getLogger("PARTICIPANT AGENT");
 	
 	@EJB
 	Database database;
