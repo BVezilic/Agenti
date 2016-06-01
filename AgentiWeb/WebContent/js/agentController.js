@@ -159,7 +159,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 				}
 				else {
 					for (var j=0; j<messages[i].receivers.length; j++) {
-						receivers += messages[i].receivers[j].type.name + (j<messages[i].receivers.length-1?', ':'');
+						receivers += messages[i].receivers[j].name +'('+ messages[i].receivers[j].type.name +')'+ (j<messages[i].receivers.length-1?', ':'');
 					}
 				}
 							
