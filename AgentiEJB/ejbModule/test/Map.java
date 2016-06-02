@@ -61,12 +61,6 @@ public class Map extends Agent {
 				aclMsg.setSender(this.getAid());
 				aclMsg.setReceivers(findSlaveByName("slave" + i));
 				aclMsg.setPerformative(Performative.REQUEST);
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				new JMSQueue(aclMsg);
 			}
 //			for (ACLMessage msg : msgs) {
