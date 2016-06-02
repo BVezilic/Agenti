@@ -29,7 +29,7 @@ public class Slave extends Agent {
 	
 	@Override
 	public void stop() {
-		System.out.println("SLAVE STOPPED");
+		log.info("SLAVE STOPPED");
 	}
 
 	@Override

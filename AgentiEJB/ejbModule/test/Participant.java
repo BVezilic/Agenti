@@ -29,7 +29,7 @@ public class Participant extends Agent {
 	
 	@Override 
 	public void stop(){
-		System.out.println("INITIATOR STOPPED");
+		log.info("INITIATOR STOPPED");
 	}
 	
 	@Override

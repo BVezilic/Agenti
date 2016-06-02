@@ -41,7 +41,7 @@ public class Map extends Agent {
 	
 	@Override
 	public void stop() {
-		System.out.println("MAP STOPPED");
+		log.info("MAP STOPPED");
 	}
 
 	@SuppressWarnings("unchecked")

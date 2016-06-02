@@ -28,8 +28,7 @@ public class Ping extends Agent {
 	
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		System.out.println("PING STOPPED");
+		log.info("PING STOPPED");
 	}
 
 	@Override
@@ -53,10 +52,10 @@ public class Ping extends Agent {
 	
 	private AID[] findPong() {
 		log.info("Trazim ponga u svom agentskom centru");
-		ArrayList<AgentInterface> ai = (ArrayList<AgentInterface>)database.getAgentsByTypeName("Pong");
+		ArrayList<AID> ai = database.getAIDSByTypeName("Pong");
 		if (ai.isEmpty())
 			return new AID[]{};
 		else
-			return new AID[]{ai.get(0).getAid()};
+			return new AID[]{ai.get(0)};
 	}
 }

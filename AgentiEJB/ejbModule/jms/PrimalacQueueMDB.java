@@ -23,43 +23,24 @@ import model.AID;
 import model.AgentInterface;
 import model.AgentskiCentar;
 
-/*
- * Prvo probati sa queue/mojQueue2. Posto u tom slucaju ovaj MDB 
- * ne "hvata" poruke iz JMSQueue aplikacije, queue se prazni preko 
- * nje. Ako i ovaj bean prima iz istog reda (mojQueue), onda
- * sama aplikacija nece ni stici da dobije poruku (MDB) ce je prvi
- * "pojesti"
- * 
- * Osim toga, probati i da JMSQueue ostane upaljena, a da se 
- * startuje jos jedna instanca iste aplikacije (dok MDB ne "hvata"
- * poruke). Videcemo da queue polako raste (sa svakim startovanjem
- * aplikacije).
- * 
- */
-
-
-@MessageDriven(activationConfig =
-{
-  @ActivationConfigProperty(propertyName="destinationType",
-    propertyValue="javax.jms.Queue"),
-  @ActivationConfigProperty(propertyName="destination",
-    propertyValue="java:jboss/exported/jms/queue/mojQueue")
-})
+@MessageDriven(activationConfig = {
+		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "java:jboss/exported/jms/queue/mojQueue") })
 
 public class PrimalacQueueMDB implements MessageListener {
-	
+
 	Logger log = Logger.getLogger("Primalac MDB");
-	
+
 	@EJB
 	Database database;
-	
-	public void onMessage (Message msg) {
+
+	public void onMessage(Message msg) {
 		try {
 			ObjectMessage omsg = (ObjectMessage) msg;
 			try {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
-				log.info("Primio sam novu poruku: " +  aclMessage);
-				
+				log.info("Primio sam novu poruku: " + aclMessage);
+
 				// zabelezi novu poruku u bazu
 				sendRest(aclMessage);
 
@@ -68,13 +49,14 @@ public class PrimalacQueueMDB implements MessageListener {
 					log.info("Nemam kome da posaljem");
 					return;
 				}
-				
+
 				// pronadji agente za koga je poruka
 				for (int i = 0; i < aclMessage.getReceivers().length; i++) {
 					log.info("Proveri da li je receiver na istom agenstkom centru");
-					if (database.getAgentskiCentar().getAddress().equals(aclMessage.getReceivers()[i].getHost().getAddress())) {
+					if (database.getAgentskiCentar().getAddress()
+							.equals(aclMessage.getReceivers()[i].getHost().getAddress())) {
 						log.info("Trazim agenta na osnovu njegovo AID-a: " + aclMessage.getReceivers()[i].getName());
-						AgentInterface agent =  database.getActiveAgentByAID(aclMessage.getReceivers()[i]);	
+						AgentInterface agent = database.getActiveAgentByAID(aclMessage.getReceivers()[i]);
 						if (agent == null) {
 							log.info("Ne postoji trazeni agent");
 						} else {
@@ -82,10 +64,11 @@ public class PrimalacQueueMDB implements MessageListener {
 							agent.handleMessage(aclMessage);
 						}
 					} else {
-						log.info("Formiraj novu poruku kako bih kontaktirao agentski centar na kome se nalazi taj agenat");
+						log.info(
+								"Formiraj novu poruku kako bih kontaktirao agentski centar na kome se nalazi taj agenat");
 						ACLMessage aclMsg = new ACLMessage();
 						aclMsg.setSender(aclMessage.getSender());
-						aclMsg.setReceivers(new AID[]{aclMessage.getReceivers()[i]});
+						aclMsg.setReceivers(new AID[] { aclMessage.getReceivers()[i] });
 						aclMsg.setContent(aclMessage.getContent());
 						aclMsg.setContentObj(aclMessage.getContentObj());
 						aclMsg.setConversationID(aclMessage.getConversationID());
@@ -93,51 +76,58 @@ public class PrimalacQueueMDB implements MessageListener {
 						aclMsg.setProtocol(aclMessage.getProtocol());
 						aclMsg.setEncoding(aclMessage.getEncoding());
 						aclMsg.setReplyTo(aclMessage.getReplyTo());
-						HashMap<String,Object> userArgs = new HashMap<String,Object>();
+						HashMap<String, Object> userArgs = new HashMap<String, Object>();
 						userArgs.put("duplikat", null);
 						aclMsg.setUserArgs(userArgs);
 						log.info("Posalji novi poruku na receiverovo agentski centar da obradi");
 						ResteasyClient client = new ResteasyClientBuilder().build();
-						System.out.println("http://" + aclMessage.getReceivers()[i].getHost().getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
-						ResteasyWebTarget target = client.target("http://" + aclMessage.getReceivers()[i].getHost().getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
-						target.request(MediaType.APPLICATION_JSON).post(Entity.entity(aclMsg, MediaType.APPLICATION_JSON));
+						System.out.println("http://" + aclMessage.getReceivers()[i].getHost().getAddress()
+								+ ":8080/AgentiWeb/rest/agentskiCentar/messages");
+						ResteasyWebTarget target = client
+								.target("http://" + aclMessage.getReceivers()[i].getHost().getAddress()
+										+ ":8080/AgentiWeb/rest/agentskiCentar/messages");
+						target.request(MediaType.APPLICATION_JSON)
+								.post(Entity.entity(aclMsg, MediaType.APPLICATION_JSON));
 						log.info("Kraj rest poziva");
 					}
 				}
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
-	    } catch (Exception e) {
-	    	e.printStackTrace ();
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
-	private void sendRest(ACLMessage aclMessage){
+
+	private void sendRest(ACLMessage aclMessage) {
 		try {
 
-			if (aclMessage.getUserArgs() == null){
+			if (aclMessage.getUserArgs() == null) {
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
-					if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())){
+					if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())) {
 						database.getMessages().add(aclMessage);
 						database.sendMessageToSocket();
 					} else {
-						if (aclMessage.getSender() != null){
-							if (!aclMessage.getSender().equals(ac.getAlias())){
+						if (aclMessage.getSender() != null) {
+							if (!aclMessage.getSender().equals(ac.getAlias())) {
 								ResteasyClient client = new ResteasyClientBuilder().build();
-								ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
-								target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
+								ResteasyWebTarget target = client.target(
+										"http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
+								target.request(MediaType.APPLICATION_JSON)
+										.put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
 							}
 						} else {
 							ResteasyClient client = new ResteasyClientBuilder().build();
-							ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
-							target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
+							ResteasyWebTarget target = client
+									.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
+							target.request(MediaType.APPLICATION_JSON)
+									.put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
 						}
-						
-						
+
 					}
 				}
 			}
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

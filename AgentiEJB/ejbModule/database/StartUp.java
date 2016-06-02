@@ -93,7 +93,6 @@ public class StartUp {
 		try {
 			agentskiCentar.setAddress(InetAddress.getLocalHost().getHostAddress());
 			agentskiCentar.setAlias(InetAddress.getLocalHost().getHostName());
-			//database.setAgentskiCentar(agentskiCentar);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -128,7 +127,7 @@ public class StartUp {
 		
 		ResteasyClient client = new ResteasyClientBuilder().build();
 		ResteasyWebTarget target = client.target("http://" + masterIP +  ":8080/AgentiWeb/rest/agentskiCentar/node/" + ac.getAlias());
-		/*Response response =*/ target.request().delete();
+		target.request().delete();
 			
 	}
 	

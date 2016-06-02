@@ -16,7 +16,6 @@ public class Agent implements AgentInterface {
 	}
 	
 	public void init(AID aid) {
-		// TODO Auto-generated method stub
 		this.id = aid;
 	}
 	

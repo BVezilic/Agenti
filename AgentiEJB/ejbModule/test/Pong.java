@@ -27,8 +27,7 @@ public class Pong extends Agent {
 	
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		System.out.println("PONG STOPPED");
+		log.info("PONG STOPPED");
 	}
 
 	@Override

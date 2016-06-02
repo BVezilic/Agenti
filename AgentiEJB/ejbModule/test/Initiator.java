@@ -25,7 +25,6 @@ public class Initiator extends Agent {
 
 	Logger log = Logger.getLogger("INITIATOR AGENT");
 
-	// private HashMap<AID,Integer> ponudeZaAgente = new HashMap<AID,Integer>();
 	private HashMap<String, HashMap<AID, Integer>> ponudeZaAgente = new HashMap<String, HashMap<AID, Integer>>();
 	private long startTime;
 	private long waitTime = 5000;
@@ -34,7 +33,7 @@ public class Initiator extends Agent {
 
 	@Override
 	public void stop() {
-		System.out.println("INITIATOR STOPPED");
+		log.info("INITIATOR STOPPED");
 	}
 
 	@Override
@@ -121,12 +120,12 @@ public class Initiator extends Agent {
 	public AID[] findParticipants() {
 
 		log.info("Trazim participante");
-		ArrayList<AgentInterface> ai = (ArrayList<AgentInterface>) database.getAgentsByTypeName("Participant");
+		ArrayList<AID> ai =  database.getAIDSByTypeName("Participant");
 		AID[] aids = new AID[ai.size()];
 
 		int brojac = 0;
-		for (AgentInterface agentInterface : ai) {
-			aids[brojac++] = agentInterface.getAid();
+		for (AID a : ai) {
+			aids[brojac++] = a;
 		}
 		return aids;
 	}
