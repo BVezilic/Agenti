@@ -311,7 +311,7 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 		ArrayList<AgentInterface> ai = database.getAgentInterfaceFromClasses((ArrayList)agents);
 		database.addAllActiveAgents(ai);
 		try {
-			database.sendMessageToSocket();
+			database.sendActiveToSocket();
 		} catch (IOException | JSONException e) {
 			System.out.println("Pukao sendStartedAgents u AC");
 			e.printStackTrace();
