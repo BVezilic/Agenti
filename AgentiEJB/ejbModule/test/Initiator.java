@@ -110,9 +110,15 @@ public class Initiator extends Agent {
 			}
 		} else if (poruka.getPerformative().equals(Performative.INFORM_DONE)) {
 			log.info("uspesno zavrsen protokol");
+			ACLMessage aclMsg = new ACLMessage();
+			aclMsg.setContent("Zavrsen posao Contract-Net, agent:" + poruka.getSender().getName() + " je uspesno uradio zadatak(success)");
+			new JMSQueue(aclMsg);
 			cleanUp(poruka.getConversationID());
 		} else if (poruka.getPerformative().equals(Performative.FAILURE)) {
 			log.info("neuspesno zavrsen protokol");
+			ACLMessage aclMsg = new ACLMessage();
+			aclMsg.setContent("Zavrsen posao Contract-Net, agent:" + poruka.getSender().getName() + " je neuspesno uradio zadatak (failure)");
+			new JMSQueue(aclMsg);
 			cleanUp(poruka.getConversationID());
 		}
 	}
