@@ -44,9 +44,13 @@
 	    <div class="navbar-header">
 	      <h1 style="color: white">Agenti</h1>
 	    </div>
-	    <div class="collapse navbar-collapse" id="myNavbar">
+	    <div class="collapse navbar-collapse" id="myNavbar" style="padding-top: 25px">
 	      <ul class="nav navbar-nav navbar-right">
-	        <li><span class="glyphicon glyphicon glyphicon-globe"></span><input type="checkbox" ng-model="podrzanWebSocket" ng-disabled="!haveWS" ng-click="changeWS()">Web socket</li>
+	        <li style="color:white">
+	        	<span class="glyphicon glyphicon glyphicon-globe"></span>
+	        	<labela>  Web socket  </labela>
+	        	<input type="checkbox" ng-model="podrzanWebSocket" ng-disabled="!haveWS" ng-click="changeWS()">
+	        </li>
 	      </ul>
 	    </div>
 	  </div>
