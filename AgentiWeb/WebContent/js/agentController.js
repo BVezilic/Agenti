@@ -193,6 +193,10 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
     }
 	// posalji koji agent treba da se aktivira 
     $scope.activate = function(agentType, agentName) {
+    	if (!agentName) {
+    		alert("Morate uneti ime agenta");
+    		return;
+    	}
     	if ($scope.podrzanWebSocket) {	
     		activateAgent(agentType.name, agentName);
     		getActive();
