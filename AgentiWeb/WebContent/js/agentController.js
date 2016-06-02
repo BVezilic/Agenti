@@ -90,7 +90,6 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 					setTypes(action.data);
 					break;
 				case 'active':	
-					console.log(action.data);
 					setActive(action.data);
 					setSender(action.data);
 					setReceivers(action.data);
