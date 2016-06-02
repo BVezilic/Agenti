@@ -167,6 +167,11 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 	public void stopAgentHelper(@PathParam("aid") String aid, @PathParam("hostName") String hostName) {
 		AID agentAID = new AID(aid, database.getAgentskiCentarByName(hostName), null);
 		database.removeActiveAgentByAid(agentAID);
+		try {
+			database.sendActiveToSocket();
+		} catch (JSONException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
