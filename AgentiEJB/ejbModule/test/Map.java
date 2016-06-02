@@ -79,6 +79,7 @@ public class Map extends Agent {
 				ACLMessage aclMsg = new ACLMessage();
 				aclMsg.setContent(recnik.toString());
 				new JMSQueue(aclMsg);
+				recnik.clear();
 			}
 		}
 	}
