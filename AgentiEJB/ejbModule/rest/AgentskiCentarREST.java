@@ -1,5 +1,6 @@
 package rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.json.JSONException;
 
 import database.Database;
 import jms.JMSQueue;
@@ -308,6 +310,12 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 		System.out.println(agents.toString());
 		ArrayList<AgentInterface> ai = database.getAgentInterfaceFromClasses((ArrayList)agents);
 		database.addAllActiveAgents(ai);
+		try {
+			database.sendMessageToSocket();
+		} catch (IOException | JSONException e) {
+			System.out.println("Pukao sendStartedAgents u AC");
+			e.printStackTrace();
+		}
 	}
 	
 	/**

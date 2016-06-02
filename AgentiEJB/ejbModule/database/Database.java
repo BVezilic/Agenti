@@ -43,7 +43,7 @@ public class Database {
 	private ArrayList<Session> sessions = new ArrayList<Session>();
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
-	private String masterIP = "192.168.0.16";
+	private String masterIP = "192.168.0.10";
 
 	private AgentskiCentar agentskiCentar;
 	
