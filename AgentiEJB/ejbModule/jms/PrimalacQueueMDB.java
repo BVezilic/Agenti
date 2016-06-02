@@ -1,5 +1,6 @@
 package jms;
 
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.ejb.ActivationConfigProperty;
@@ -57,6 +58,7 @@ public class PrimalacQueueMDB implements MessageListener {
 			ObjectMessage omsg = (ObjectMessage) msg;
 			try {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
+				aclMessage.setProtocol(" ");
 				log.info("Primio sam novu poruku: " +  aclMessage);
 				
 				// zabelezi novu poruku u bazu
@@ -90,10 +92,12 @@ public class PrimalacQueueMDB implements MessageListener {
 						aclMsg.setContentObj(aclMessage.getContentObj());
 						aclMsg.setConversationID(aclMessage.getConversationID());
 						aclMsg.setPerformative(aclMessage.getPerformative());
-						aclMsg.setProtocol("repeat");
+						aclMsg.setProtocol(aclMessage.getProtocol());
 						aclMsg.setEncoding(aclMessage.getEncoding());
 						aclMsg.setReplyTo(aclMessage.getReplyTo());
-						aclMsg.setUserArgs(aclMessage.getUserArgs());
+						HashMap<String,Object> userArgs = new HashMap<String,Object>();
+						userArgs.put("duplikat", null);
+						aclMsg.setUserArgs(userArgs);
 						log.info("Posalji novi poruku na receiverovo agentski centar da obradi");
 						ResteasyClient client = new ResteasyClientBuilder().build();
 						System.out.println("http://" + aclMessage.getReceivers()[i].getHost().getAddress() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
@@ -112,7 +116,8 @@ public class PrimalacQueueMDB implements MessageListener {
 	
 	private void sendRest(ACLMessage aclMessage){
 		try {
-			if (aclMessage.getProtocol() != null && !aclMessage.getProtocol().equals("repeat")){
+
+			if (aclMessage.getUserArgs() == null){
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
 					if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())){
 						database.getMessages().add(aclMessage);
