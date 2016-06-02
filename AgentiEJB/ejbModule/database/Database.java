@@ -43,7 +43,7 @@ public class Database {
 	private ArrayList<Session> sessions = new ArrayList<Session>();
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
-	private String masterIP = "192.168.0.10";
+	private String masterIP = "192.168.0.16";
 
 	private AgentskiCentar agentskiCentar;
 	
@@ -191,6 +191,15 @@ public class Database {
 		return null;
 	}
 	
+	public AID getAidByName(String name) {
+		for (AID aid : activeAgents.keySet()){
+			if (aid.getName().equals(name)){
+				return aid;
+			}
+		}
+		return null;
+	}
+	
 	public List<AgentInterface> getAgentsByTypeName(String typeName){
 		ArrayList<AgentInterface> retVal = new ArrayList<AgentInterface>();	
 		
@@ -238,6 +247,9 @@ public class Database {
 		return false;
 	}
 
+	public void removeActiveAgentByAid(AID aid) {
+		activeAgents.remove(aid);
+	}
 	public ArrayList<AgentInterface> getActiveAgents() {
 		ArrayList<AgentInterface> ai = new ArrayList<AgentInterface>();
 		

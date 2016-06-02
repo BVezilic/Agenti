@@ -29,7 +29,6 @@ public class Slave extends Agent {
 	
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		System.out.println("SLAVE STOPPED");
 	}
 

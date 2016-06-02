@@ -58,15 +58,13 @@ public class PrimalacQueueMDB implements MessageListener {
 			ObjectMessage omsg = (ObjectMessage) msg;
 			try {
 				ACLMessage aclMessage = (ACLMessage) omsg.getObject();
-				aclMessage.setProtocol(" ");
 				log.info("Primio sam novu poruku: " +  aclMessage);
 				
 				// zabelezi novu poruku u bazu
 				sendRest(aclMessage);
 
-				
 				// proveri da li postoji receiveri
-				if (aclMessage.getReceivers().length == 0) {
+				if (aclMessage.getReceivers() == null || aclMessage.getReceivers().length == 0) {
 					log.info("Nemam kome da posaljem");
 					return;
 				}

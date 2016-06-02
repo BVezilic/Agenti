@@ -41,7 +41,6 @@ public class Map extends Agent {
 	
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		System.out.println("MAP STOPPED");
 	}
 
@@ -52,7 +51,6 @@ public class Map extends Agent {
 			File folder = new File(poruka.getContent());
 			File[] files = folder.listFiles();
 			SLAVE_NUMBER = files.length;
-			//ArrayList<ACLMessage> msgs = new ArrayList<ACLMessage>();
 			for(int i=0; i < files.length; i++) {
 				log.info("Pravim slave redni broj " + i);
 				startSlave("Slave", "slave" + i);
@@ -63,10 +61,6 @@ public class Map extends Agent {
 				aclMsg.setPerformative(Performative.REQUEST);
 				new JMSQueue(aclMsg);
 			}
-//			for (ACLMessage msg : msgs) {
-//				log.info("Saljem spisak poruka za slave agente na queue");
-//				new JMSQueue(msg);
-//			}
 		} else if (poruka.getPerformative().equals(Performative.INFORM)) {
 			SLAVE_NUMBER--;
 			HashMap<String, Integer> words = (HashMap<String, Integer>) poruka.getContentObj();
@@ -82,7 +76,9 @@ public class Map extends Agent {
 			log.info("Stopiram slave agenta sa imenom: " + poruka.getSender().getName());
 			stopSlave(poruka.getSender().getName(), poruka.getSender().getHost().getAlias());
 			if (SLAVE_NUMBER == 0) {
-				log.info(recnik.toString());
+				ACLMessage aclMsg = new ACLMessage();
+				aclMsg.setContent(recnik.toString());
+				new JMSQueue(aclMsg);
 			}
 		}
 	}
@@ -90,7 +86,7 @@ public class Map extends Agent {
 	private AID[] findSlaveByName(String name) {
 		AID[] receivers = new AID[1];
 		log.info("Trazim slave agenta kome treba da posaljem poruku: " + name);
-		receivers[0] = database.getActiveAgentByName(name).getAid();
+		receivers[0] = database.getAidByName(name);
 		return receivers;
 	}
 	
@@ -111,8 +107,6 @@ public class Map extends Agent {
 	
 	private void stopSlave(String aid, String hostName) {
 		AID agentAID = new AID(aid, database.getAgentskiCentarByName(hostName) , null);
-		AgentInterface agent = database.getActiveAgentByAID(agentAID);
-		database.removeActiveAgent(agent);
-		agent.stop();
+		database.removeActiveAgentByAid(agentAID);
 	}
 }
