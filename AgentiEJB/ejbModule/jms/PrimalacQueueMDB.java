@@ -60,6 +60,7 @@ public class PrimalacQueueMDB implements MessageListener {
 				
 				// zabelezi novu poruku u bazu
 				database.getMessages().add(aclMessage);
+				database.sendMessageToSocket();
 				
 				// proveri da li postoji receiveri
 				if (aclMessage.getReceivers().length == 0) {

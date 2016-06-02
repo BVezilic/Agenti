@@ -14,6 +14,10 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.websocket.Session;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import model.ACLMessage;
 import model.AID;
 import model.Agent;
@@ -38,7 +42,7 @@ public class Database {
 	private ArrayList<Session> sessions = new ArrayList<Session>();
 	private ArrayList<ACLMessage> messages = new ArrayList<ACLMessage>();
 	
-	private String masterIP = "192.168.0.10";
+	private String masterIP = "192.168.0.16";
 
 	private AgentskiCentar agentskiCentar;
 	
@@ -312,12 +316,32 @@ public class Database {
 		this.sessions = sessions;
 	}
 
-	public void sendMessage(String msg) throws IOException {
+	public void sendMessageToSocket() throws IOException, JSONException {
 		for (Session s : sessions) {
-			s.getBasicRemote().sendText(msg);
+			JSONObject jsonObj = new JSONObject();
+			JSONArray jsonArray = new JSONArray();
+			for(ACLMessage aclMsg : messages){
+				jsonArray.put(new JSONObject(aclMsg));
+			}		
+			jsonObj.put("data", jsonArray);
+			jsonObj.put("type", "messagesPoll");
+			s.getBasicRemote().sendText(jsonObj.toString());
 		}
 	}
 
+	public void sendActiveToSocket() {
+//		for (Session s : sessions) {
+//			JSONObject jsonObj = new JSONObject();
+//			JSONArray jsonArray = new JSONArray();
+//			for(AID ai : getActiveAgents()){
+//				jsonArray.put(new JSONObject(ai));
+//			}		
+//			jsonObj.put("data", jsonArray);
+//			jsonObj.put("type", "messagesPoll");
+//			s.getBasicRemote().sendText(jsonObj.toString());
+//		}
+	}
+	
 	public ArrayList<ACLMessage> getMessages() {
 		return messages;
 	}

@@ -2,10 +2,14 @@ var app = angular.module('MyApp', []);
 app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 	// da li je podrzan websocket
 	if ("WebSocket" in window) {
-		$scope.podrzanWebSocket = false;
+		$scope.haveWS = true;
 	} else {
-		$scope.podrzanWebSocket = false;
+		$scope.haveWS = false;
 	} 
+	
+	// inicijalno se radi preko REST-a
+	$scope.podrzanWebSocket = false;
+	
 	// getteri za promenljive preko WSMenadzera
 	var getPerformative = function(){
 		if ($scope.podrzanWebSocket) {
@@ -62,7 +66,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 	}
 	
 	// inicijalizuj podatke i startuj socket ako moze
-	if ($scope.podrzanWebSocket) {
+	if ("WebSocket" in window) {
 		var host = "ws://localhost:8080/AgentiWeb/websocket";
 		try {
 			$scope.socket = new WebSocket(host);
@@ -85,14 +89,16 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 				case 'types':
 					setTypes(action.data);
 					break;
-				case 'active':					
+				case 'active':	
+					console.log(action.data);
 					setActive(action.data);
 					setSender(action.data);
 					setReceivers(action.data);
 					break;
-				case 'consoleLog':
-					addMessage(action.data);
-				}
+				case 'messagesPoll':
+					addMessage(formatMessages(action.data));
+					break;
+				}					
 			}
 	
 			$scope.socket.onclose = function() {
@@ -128,9 +134,10 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 	}
     
 	var sendACLMessage = function(aclMessage) {
+		aclMessage = removeHash(aclMessage);
 		var msg = {
 			type: 'aclMessage',
-			data: aclMessage
+			data: JSON.stringify(aclMessage)
 		}
 		$scope.socket.send(JSON.stringify(msg));
 	}
@@ -140,37 +147,51 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		  method: 'GET',
 		  url: 'http://localhost:8080/AgentiWeb/rest/agentskiCentar/messages',
 		}).then(function successCallback(response) {
-			var messages = response.data;
-			var retVal = [];
-			
-			for (var i=0; i<messages.length; i++) {	
-				var sender = '';
-				var receivers = '';
-				
-				if (messages[i].sender == null) {
-					sender = 'Klijent';
-				}
-				else {
-					sender = messages[i].sender.name +'('+ messages[i].sender.type.name +')';
-				}
-				
-				if (messages[i].receivers == null) {
-					receivers = 'Niko';
-				}
-				else {
-					for (var j=0; j<messages[i].receivers.length; j++) {
-						receivers += messages[i].receivers[j].name +'('+ messages[i].receivers[j].type.name +')'+ (j<messages[i].receivers.length-1?', ':'');
-					}
-				}
-							
-				retVal.push('Message performative: '+messages[i].performative+', from: '+sender+', to: '+receivers+' content: '+messages[i].content);
-			}
-			addMessage(retVal);
+			addMessage(formatMessages(response.data));
 		  }, function errorCallback(response) {
 		    alert('Nesto je poslo kako ne treba!');
 		  });
     }
     
+    var formatMessages = function(messages) {
+    	var retVal = [];
+    	for (var i=0; i<messages.length; i++) {	
+			var sender = '';
+			var receivers = '';
+			
+			if (messages[i].sender == null) {
+				sender = 'Klijent';
+			}
+			else {
+				sender = messages[i].sender.name +'('+ messages[i].sender.type.name +')';
+			}
+			
+			if (messages[i].receivers == null) {
+				receivers = 'Niko';
+			}
+			else {
+				for (var j=0; j<messages[i].receivers.length; j++) {
+					receivers += messages[i].receivers[j].name +'('+ messages[i].receivers[j].type.name +')'+ (j<messages[i].receivers.length-1?', ':'');
+				}
+			}
+						
+			retVal.push('Message performative: '+messages[i].performative+', from: '+sender+', to: '+receivers+' content: '+messages[i].content);
+		}
+    	return retVal;
+    }
+    
+    var removeHash = function(aclMessage) {
+    	for (var i=0; i<aclMessage.receivers.length; i++)
+    		delete aclMessage.receivers[i].$$hashKey;
+    	if(aclMessage.sender)
+    		delete aclMessage.sender.$$hashKey;
+    	return aclMessage;
+    }
+    
+    var refresh = function() {
+    	if ($scope.podrzanWebSocket)
+    		$scope.$apply();
+    }
 	// posalji koji agent treba da se aktivira 
     $scope.activate = function(agentType, agentName) {
     	if ($scope.podrzanWebSocket) {	
@@ -269,31 +290,48 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
     	$scope.selectedReplyWith = undefined;
     	$scope.selectedReplyBy = undefined;
     }
-    
-    //polling
-    $interval(pollMessages, 5000);
-    
-    $interval(getActive, 2000);
-    
+
     //setteri
 	var setPerformative = function(data){
 		$scope.performative = data;
+		refresh();
 	}
 	var setActive = function(data){
 		$scope.activeAgents = data;
+		refresh();
 	}
 	var setTypes = function(data) {
 		$scope.supportedAgents = data;
+		refresh();
 	}
 	var setReceivers = function(data) {
-		if ($scope.selectedReceiver == undefined)
+		if (!$scope.selectedReceiver)
 			$scope.receivers = data;
+		else if ($scope.selectedReceiver.length == 0)
+			$scope.receivers = data;
+		refresh();
 	}
 	var setSender = function(data) {
-		if ($scope.selectedSender == undefined)
+		if (!$scope.selectedSender)
 			$scope.sender = data;
+		refresh();
 	}
 	var addMessage = function(data) {
-		$scope.consoleLog = data; 
+		$scope.consoleLog = data;
+		refresh();
+	}
+    
+    //polling
+	var promiseMsg = $interval(pollMessages, 5000);
+	var promiseAct = $interval(getActive, 2000);
+	$scope.changeWS = function() {
+		if ($scope.podrzanWebSocket) {
+			$interval.cancel(promiseMsg);
+			$interval.cancel(promiseAct);
+		} else {
+			promiseMsg = $interval(pollMessages, 5000);
+			promiseAct = $interval(getActive, 2000);
+		}
+		
 	}
 });

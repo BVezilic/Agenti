@@ -112,23 +112,18 @@ public class WSManager {
 							}
 							case "aclMessage": {
 								ACLMessage aclMessage = new ObjectMapper().readValue(jsonMsg.getString("data"), ACLMessage.class);
+								log.info("Transformisao sam poruku u: " + aclMessage);
 								agentskiCentar.sendACLMessage(aclMessage);
 								break;
 							}
 						}
-//						ResteasyClient client = new ResteasyClientBuilder().build();
-//				        ResteasyWebTarget target = client.target("http://"+database.getMasterIP()+":8080/AgentiWeb/rest/something");
-//				        Response response = target.request().get();
-//				        String ret = response.readEntity(String.class);	
-//				        System.out.println(ret);
-//						s.getBasicRemote().sendText("login;"+ret, last);
-//						log.info("Sending '" + ret + "' to : " + s.getId());	
 					}
 				}
 			}
 		} catch (IOException e) {
 			try {
 				session.close();
+				e.printStackTrace();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

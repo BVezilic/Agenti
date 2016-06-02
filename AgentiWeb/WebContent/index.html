@@ -44,6 +44,11 @@
 	    <div class="navbar-header">
 	      <h1 style="color: white">Agenti</h1>
 	    </div>
+	    <div class="collapse navbar-collapse" id="myNavbar">
+	      <ul class="nav navbar-nav navbar-right">
+	        <li><span class="glyphicon glyphicon glyphicon-globe"></span><input type="checkbox" ng-model="podrzanWebSocket" ng-disabled="!haveWS" ng-click="changeWS()">Web socket</li>
+	      </ul>
+	    </div>
 	  </div>
 	</nav>
 	  
