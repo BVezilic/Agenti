@@ -90,7 +90,7 @@ public class PrimalacQueueMDB implements MessageListener {
 						aclMsg.setContentObj(aclMessage.getContentObj());
 						aclMsg.setConversationID(aclMessage.getConversationID());
 						aclMsg.setPerformative(aclMessage.getPerformative());
-						aclMsg.setProtocol(aclMessage.getProtocol());
+						aclMsg.setProtocol("repeat");
 						aclMsg.setEncoding(aclMessage.getEncoding());
 						aclMsg.setReplyTo(aclMessage.getReplyTo());
 						aclMsg.setUserArgs(aclMessage.getUserArgs());
@@ -112,25 +112,27 @@ public class PrimalacQueueMDB implements MessageListener {
 	
 	private void sendRest(ACLMessage aclMessage){
 		try {
-			for (AgentskiCentar ac : database.getAgentskiCentri()) {
-				if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())){
-					database.getMessages().add(aclMessage);
-					database.sendMessageToSocket();
-				} else {
-					if (aclMessage.getSender() != null){
-						AgentInterface ai = database.getActiveAgentByAID(aclMessage.getSender());
-						if (!ai.getAid().getHost().getAlias().equals(ac.getAlias())){
+			if (!aclMessage.getProtocol().equals("repeat")){
+				for (AgentskiCentar ac : database.getAgentskiCentri()) {
+					if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())){
+						database.getMessages().add(aclMessage);
+						database.sendMessageToSocket();
+					} else {
+						if (aclMessage.getSender() != null){
+							AgentInterface ai = database.getActiveAgentByAID(aclMessage.getSender());
+							if (!ai.getAid().getHost().getAlias().equals(ac.getAlias())){
+								ResteasyClient client = new ResteasyClientBuilder().build();
+								ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
+								target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
+							}
+						} else {
 							ResteasyClient client = new ResteasyClientBuilder().build();
 							ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
 							target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
 						}
-					} else {
-						ResteasyClient client = new ResteasyClientBuilder().build();
-						ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
-						target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
+						
+						
 					}
-					
-					
 				}
 			}
 		} catch (Exception e){
