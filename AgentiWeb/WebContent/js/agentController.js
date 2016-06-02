@@ -24,7 +24,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 			}).then(function successCallback(response) {
 				$scope.performative = response.data;
 			  }, function errorCallback(response) {
-			    alert('Nesto je poslo kako ne treba!');
+			    console.log('Greska prilikom getovanja performativa!');
 			  });
 		}
 	}
@@ -43,7 +43,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 				setSender(response.data);
 				setReceivers(response.data);
 			  }, function errorCallback(response) {
-			    alert('Nesto je poslo kako ne treba!');
+				console.log('Greska prilikom getovanja aktivnih agenata!');
 			  });
 		}
 	}
@@ -60,7 +60,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 			}).then(function successCallback(response) {
 				setTypes(response.data);
 			  }, function errorCallback(response) {
-			    alert('Nesto je poslo kako ne treba!');
+				console.log('Greska prilikom getovanja tipova!');
 			  });
 		}
 	}
@@ -148,7 +148,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		}).then(function successCallback(response) {
 			addMessage(formatMessages(response.data));
 		  }, function errorCallback(response) {
-		    alert('Nesto je poslo kako ne treba!');
+			console.log('Greska prilikom pollovanja za poruke!');
 		  });
     }
     
@@ -214,10 +214,10 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 						setSender(response.data);
 						setReceivers(response.data);
 					  }, function errorCallback(response) {
-					    alert('Nesto je poslo kako ne treba!');
+						console.log('Greska prilikom gettovanja aktivnih agenata!');
 					  });
 			  }, function errorCallback(response) {
-			    alert('Nesto je poslo kako ne treba!');
+				console.log('Greska prilikom aktiviranja agenta!');
 			  });    		    		
     	}
     };
@@ -240,10 +240,10 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
   						setActive(response.data);
   						setSender(response.data);
   					  }, function errorCallback(response) {
-  					    alert('Nesto je poslo kako ne treba prilikom dodavanja liste aktivnih agenata!');
+  						console.log('Greska prilikom getovanja aktivnih agenata!');
   					  });
   	  		  }, function errorCallback(response) {
-  	  		    alert('Nesto je poslo kako ne treba!');
+  	  			console.log('Greska prilikom deaktiviranja agenata!');
   	  		});
     	}
     };
@@ -274,7 +274,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 			}).then(function successCallback(response) {
 				// uspesno poslao poruku
 			  }, function errorCallback(response) {
-			    alert('Nesto je poslo kako ne treba!');
+				console.log('Greska prilikom slanja poruke!');
 			  });
     	}
 	}
