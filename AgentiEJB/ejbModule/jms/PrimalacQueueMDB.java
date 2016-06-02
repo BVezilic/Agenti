@@ -124,8 +124,7 @@ public class PrimalacQueueMDB implements MessageListener {
 						database.sendMessageToSocket();
 					} else {
 						if (aclMessage.getSender() != null){
-							AgentInterface ai = database.getActiveAgentByAID(aclMessage.getSender());
-							if (!ai.getAid().getHost().getAlias().equals(ac.getAlias())){
+							if (!aclMessage.getSender().equals(ac.getAlias())){
 								ResteasyClient client = new ResteasyClientBuilder().build();
 								ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
 								target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));

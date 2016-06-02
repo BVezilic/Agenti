@@ -358,4 +358,12 @@ public class Database {
 		this.messages = messages;
 	}
 	
+	public ArrayList<AID> getActiveAgentAIDS(){
+		ArrayList<AID> retVal = new ArrayList<AID>();
+		for (AID aid : activeAgents.keySet()) {
+			retVal.add(aid);
+		}
+		return retVal;
+	}
+	
 }
