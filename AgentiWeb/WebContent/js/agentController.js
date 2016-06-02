@@ -304,16 +304,48 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 		$scope.supportedAgents = data;
 		refresh();
 	}
-	var setReceivers = function(data) {
-		if (!$scope.selectedReceiver)
-			$scope.receivers = data;
-		else if ($scope.selectedReceiver.length == 0)
-			$scope.receivers = data;
+	var setReceivers = function(data) { // data niz aktivnih agenata
+		var previous = $scope.selectedReceiver;
+		var current = [];
+		flag = 0;
+		$scope.receivers = data;
+		
+		if (previous){
+			for (var i = 0; i < data.length; i++){
+				for (var j = 0; j < previous.length; j++){
+					if (previous[j].name == data[i].name){
+						current.push(data[i]);
+						flag = 1;
+					}
+				}
+			}
+			if (flag == 0){
+				$scope.selectedReceiver = undefined;
+			} else {
+				$scope.selectedReceiver = current;
+			}
+		}
+		
 		refresh();
 	}
 	var setSender = function(data) {
-		if (!$scope.selectedSender)
-			$scope.sender = data;
+		
+		var temp = $scope.selectedSender;
+		var flag = 0;
+		$scope.sender = data;
+		
+		if (temp){
+			for (var i = 0; i < data.length; i++){
+				if (temp.name == data[i].name){
+					$scope.selectedSender = data[i];
+					flag = 1;
+				}
+			}
+			if (flag == 0){
+				$scope.selectedSender = undefined;
+			}
+		}
+		
 		refresh();
 	}
 	var addMessage = function(data) {
