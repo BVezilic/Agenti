@@ -195,6 +195,18 @@ public class AgentskiCentarREST implements AgentskiCentarRESTRemote {
 		return database.getMessages();
 	}
 	
+	@PUT
+	@Path("/messages")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void getACLFromOtherHost(ACLMessage aclMessage){
+		try {
+			database.getMessages().add(aclMessage);
+			database.sendMessageToSocket();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * dobavi listu performativa.
 	 */

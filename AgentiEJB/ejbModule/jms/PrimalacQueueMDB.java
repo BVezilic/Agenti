@@ -20,6 +20,7 @@ import database.Database;
 import model.ACLMessage;
 import model.AID;
 import model.AgentInterface;
+import model.AgentskiCentar;
 
 /*
  * Prvo probati sa queue/mojQueue2. Posto u tom slucaju ovaj MDB 
@@ -59,8 +60,22 @@ public class PrimalacQueueMDB implements MessageListener {
 				log.info("Primio sam novu poruku: " +  aclMessage);
 				
 				// zabelezi novu poruku u bazu
-				database.getMessages().add(aclMessage);
-				database.sendMessageToSocket();
+				for (AgentskiCentar ac : database.getAgentskiCentri()) {
+					if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())){
+						database.getMessages().add(aclMessage);
+						database.sendMessageToSocket();
+					} else {
+						
+						AgentInterface ai = database.getActiveAgentByAID(aclMessage.getSender());
+						if (!ai.getAid().getHost().getAlias().equals(ac.getAlias())){
+							ResteasyClient client = new ResteasyClientBuilder().build();
+							ResteasyWebTarget target = client.target("http://" + ac.getAlias() + ":8080/AgentiWeb/rest/agentskiCentar/messages");
+							target.request(MediaType.APPLICATION_JSON).put(Entity.entity(aclMessage, MediaType.APPLICATION_JSON));
+						}
+						
+					}
+				}
+
 				
 				// proveri da li postoji receiveri
 				if (aclMessage.getReceivers().length == 0) {
