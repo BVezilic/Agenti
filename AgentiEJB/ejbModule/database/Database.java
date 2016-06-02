@@ -14,6 +14,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.websocket.Session;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -317,29 +318,34 @@ public class Database {
 	}
 
 	public void sendMessageToSocket() throws IOException, JSONException {
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString(messages);
+		System.out.println(jsonInString);
 		for (Session s : sessions) {
-			JSONObject jsonObj = new JSONObject();
-			JSONArray jsonArray = new JSONArray();
-			for(ACLMessage aclMsg : messages){
-				jsonArray.put(new JSONObject(aclMsg));
-			}		
-			jsonObj.put("data", jsonArray);
+			JSONObject jsonObj = new JSONObject();	
+			jsonObj.put("data", new JSONArray(jsonInString));
 			jsonObj.put("type", "messagesPoll");
 			s.getBasicRemote().sendText(jsonObj.toString());
 		}
 	}
 
-	public void sendActiveToSocket() {
-//		for (Session s : sessions) {
-//			JSONObject jsonObj = new JSONObject();
-//			JSONArray jsonArray = new JSONArray();
-//			for(AID ai : getActiveAgents()){
-//				jsonArray.put(new JSONObject(ai));
-//			}		
-//			jsonObj.put("data", jsonArray);
-//			jsonObj.put("type", "messagesPoll");
-//			s.getBasicRemote().sendText(jsonObj.toString());
-//		}
+	public void sendActiveToSocket() throws JSONException, IOException {
+		// napravi listu aid-a umesto remote interfejsa
+		List<AID> aids = new ArrayList<>();
+		for (AgentInterface ai : getActiveAgents()) {
+			aids.add(ai.getAid());
+		}
+		// prodji kroz sve sesije i posalji listu agenata
+		for (Session s : sessions) {
+			JSONObject jsonObj = new JSONObject();
+			JSONArray jsonArray = new JSONArray();
+			for(AID ai : aids){
+				jsonArray.put(new JSONObject(ai));
+			}		
+			jsonObj.put("data", jsonArray);
+			jsonObj.put("type", "active");
+			s.getBasicRemote().sendText(jsonObj.toString());
+		}
 	}
 	
 	public ArrayList<ACLMessage> getMessages() {
