@@ -112,7 +112,7 @@ public class PrimalacQueueMDB implements MessageListener {
 	
 	private void sendRest(ACLMessage aclMessage){
 		try {
-			if (!aclMessage.getProtocol().equals("repeat")){
+			if (aclMessage.getProtocol() != null && !aclMessage.getProtocol().equals("repeat")){
 				for (AgentskiCentar ac : database.getAgentskiCentri()) {
 					if (database.getAgentskiCentar().getAlias().equals(ac.getAlias())){
 						database.getMessages().add(aclMessage);
