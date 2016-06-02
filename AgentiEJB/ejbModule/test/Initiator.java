@@ -21,6 +21,8 @@ import model.Performative;
 @Stateful
 public class Initiator extends Agent {
 
+	private static final long serialVersionUID = 6509467929501143779L;
+
 	Logger log = Logger.getLogger("INITIATOR AGENT");
 
 	// private HashMap<AID,Integer> ponudeZaAgente = new HashMap<AID,Integer>();

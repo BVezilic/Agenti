@@ -20,7 +20,9 @@ import model.Performative;
 @Remote(AgentInterface.class)
 public class Participant extends Agent {
 
-Logger log = Logger.getLogger("PARTICIPANT AGENT");
+	private static final long serialVersionUID = 2895407059340456494L;
+
+	Logger log = Logger.getLogger("PARTICIPANT AGENT");
 	
 	@EJB
 	Database database;
