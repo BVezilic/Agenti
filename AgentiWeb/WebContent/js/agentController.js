@@ -151,7 +151,7 @@ app.controller('AgentController', function($scope, $http, $timeout, $interval) {
 					sender = 'Klijent';
 				}
 				else {
-					sender = messages[i].sender.type.name;
+					sender = messages[i].sender.name +'('+ messages[i].sender.type.name +')';
 				}
 				
 				if (messages[i].receivers == null) {
