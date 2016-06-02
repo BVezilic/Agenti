@@ -332,9 +332,11 @@ public class Database {
 	public void sendActiveToSocket() throws JSONException, IOException {
 		// napravi listu aid-a umesto remote interfejsa
 		List<AID> aids = new ArrayList<>();
-		for (AgentInterface ai : getActiveAgents()) {
-			aids.add(ai.getAid());
+		
+		for (AID aid : activeAgents.keySet()){
+			aids.add(aid);
 		}
+		
 		// prodji kroz sve sesije i posalji listu agenata
 		for (Session s : sessions) {
 			JSONObject jsonObj = new JSONObject();
